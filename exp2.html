@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实验二：单链表（二）—— AI+虚拟仿真实验</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif;background:#f0f4f8;color:#2c3e50;line-height:1.8}
+.header{background:linear-gradient(135deg,#1a5276 0%,#2e86c1 50%,#3498db 100%);color:#fff;padding:40px;text-align:center}
+.header h1{font-size:2em;margin-bottom:8px}
+.header p{opacity:0.9}
+.nav-bar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:12px 0}
+.nav-bar .container{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.nav-bar a{padding:7px 16px;background:#3498db;color:#fff;text-decoration:none;border-radius:20px;font-size:0.9em;transition:background 0.3s}
+.nav-bar a:hover{background:#2980b9}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.6em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:35px 0 20px}
+.sub-title{font-size:1.3em;color:#2c3e50;margin:25px 0 12px;padding-left:10px;border-left:3px solid #1abc9c}
+.info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.ai-box{background:#f0f8e8;border-left:4px solid #1abc9c;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.trad-box{background:#fef9e7;border-left:4px solid #f39c12;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.table{width:100%;border-collapse:collapse;margin:15px 0}
+.table th,.table td{padding:12px 15px;text-align:left;border-bottom:1px solid #ddd}
+.table th{background:#3498db;color:#fff}
+tr:hover{background:#f5f5f5}
+.footer{text-align:center;padding:25px;color:#7f8c8d;font-size:0.9em;margin-top:30px}
+ul{padding-left:20px}li{margin-bottom:6px}
+.viz-container{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);padding:25px;margin:20px 0}
+.viz-title{font-size:1.2em;color:#1a5276;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #eef2f7}
+.viz-area{min-height:200px;background:#fafbfc;border:2px dashed #dce1e8;border-radius:8px;padding:20px;position:relative;overflow-x:auto}
+.viz-controls{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
+.viz-btn{padding:8px 18px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.95em;transition:all 0.2s}
+.viz-btn:hover{background:#2980b9;transform:translateY(-1px)}
+.viz-btn.danger{background:#e74c3c}
+.viz-btn.danger:hover{background:#c0392b}
+.viz-btn.success{background:#27ae60}
+.viz-btn.success:hover{background:#1e8449}
+.viz-btn.warning{background:#f39c12}
+.viz-btn.warning:hover{background:#d68910}
+.viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.linked-list{display:flex;align-items:center;gap:0;padding:20px 10px;min-height:80px;flex-wrap:wrap}
+.node{display:inline-flex;align-items:center;background:#fff;border:2px solid #3498db;border-radius:8px;margin:5px;position:relative;transition:all 0.3s;box-shadow:0 2px 8px rgba(52,152,219,0.15)}
+.node.highlight{background:#fff3cd;border-color:#f39c12;box-shadow:0 0 15px rgba(243,156,18,0.4)}
+.node.reverse{background:#d5f5e3;border-color:#27ae60}
+.node-arrow{padding:0 8px;color:#3498db;font-size:1.2em;font-weight:bold}
+.head-label{background:#1a5276;color:#fff;padding:5px 12px;border-radius:15px;font-size:0.85em;margin-right:10px;font-weight:bold}
+.null-pointer{color:#95a5a6;font-style:italic;padding:0 10px}
+.code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
+.code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
+.code-keyword{color:#9b59b6}
+.code-type{color:#3498db}
+.code-comment{color:#7f8c8d;font-style:italic}
+.code-string{color:#27ae60}
+.code-number{color:#e67e22}
+.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
+.log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:#666;margin-right:8px}
+.input-group{display:flex;gap:10px;margin:10px 0;align-items:center;flex-wrap:wrap}
+.input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
+.input-group label{font-weight:bold;color:#555}
+.step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
+.tab-bar{display:flex;gap:5px;margin-bottom:15px}
+.tab-btn{padding:8px 16px;background:#eef2f7;border:none;border-radius:6px 6px 0 0;cursor:pointer;font-size:0.95em;color:#555}
+.tab-btn.active{background:#3498db;color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+</head>
+<body>
+<div class="header"><h1>实验二：单链表（二）</h1><p>AI链表高级操作实验室 · 虚拟仿真实验教学</p></div>
+<div class="nav-bar"><div class="container">
+<a href="index.html">首页</a><a href="exp1.html">实验一 单链表(一)</a><a href="exp2.html">实验二 单链表(二)</a>
+<a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">实验五 最短路径</a>
+<a href="exp6.html">实验六 内部排序</a><a href="prompts.html">AI提示词</a>
+</div></div>
+<div class="container">
+<h2 class="section-title">一、实验基本信息</h2>
+<table class="table"><tr><th>项目</th><th>内容</th></tr>
+<tr><td>实验名称</td><td>单链表（二）—— AI链表高级操作实验室</td></tr>
+<tr><td>课程名称</td><td>数据结构</td></tr><tr><td>专业方向</td><td>计算机科学与技术</td></tr>
+<tr><td>实验学时</td><td>3学时</td></tr><tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
+
+<h2 class="section-title">二、传统实验内容</h2>
+<div class="trad-box"><h3>原始实验要求</h3>
+<p><strong>实验目的：</strong>掌握线性表的链式存储结构及其基本操作。</p>
+<p><strong>实验内容：</strong></p>
+<ol style="padding-left:20px;margin-top:10px"><li>实现单链表的就地逆置</li><li>建立两个非递减有序单链表，然后合并成一个非递减链表</li><li>建立两个非递减有序单链表，然后合并成一个非递增链表</li><li>编写一个主函数，调试上述算法</li></ol>
+<p style="margin-top:10px"><strong>选做题/思考题：</strong></p>
+<ol style="padding-left:20px;margin-top:5px"><li>如何用带表头结点的单链表作为多项式的存储表示，实现两个多项式的相加</li><li>约瑟夫环的实现</li><li>如何利用文件实现学生信息的存取</li></ol></div>
+
+<h2 class="section-title">三、AI+增强实验设计</h2>
+<div class="ai-box"><h3>人工智能融合方案</h3>
+<p>针对单链表高级操作，引入AI算法可视化、代码评审、交互式仿真等技术，帮助学生理解复杂的链表操作逻辑。通过逐步动画演示引擎，将就地逆置、有序合并等算法分解为可理解的步骤。</p></div>
+
+<h2 class="section-title">四、可视化实验操作台</h2>
+<div class="viz-container">
+<div class="viz-title">链表高级操作可视化实验室</div>
+<div class="tab-bar">
+<button class="tab-btn active" onclick="switchTab('reverse')">就地逆置</button>
+<button class="tab-btn" onclick="switchTab('merge')">有序合并</button>
+<button class="tab-btn" onclick="switchTab('josephus')">约瑟夫环</button>
+</div>
+
+<!-- Tab 1: 就地逆置 -->
+<div id="tab-reverse" class="tab-content active">
+<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>请先创建链表</div>
+<div class="input-group">
+<label>链表数据(逗号分隔):</label>
+<input type="text" id="listData1" value="1,3,5,7,9" style="width:300px">
+<button class="viz-btn success" onclick="initReverse()">创建链表</button>
+<button class="viz-btn warning" onclick="reverseList()">就地逆置</button>
+<button class="viz-btn" onclick="clearList1()" style="background:#95a5a6">清空</button>
+</div>
+<div class="viz-area"><div id="listView1"><span class="head-label">HEAD</span><span class="null-pointer"> → NULL</span></div></div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 就地逆置算法代码</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 单链表就地逆置
+void ReverseList(LinkList L) {
+    if(L->next == NULL || L->next->next == NULL)
+        return;
+    Student *p = L->next;      // p指向首结点
+    L->next = NULL;           // 头结点next置空
+    Student *q;
+    while(p != NULL) {
+        q = p->next;           // q保存后继结点
+        p->next = L->next;     // p插入到头结点后
+        L->next = p;           // 头结点指向p
+        p = q;                 // p指向下一个
+    }
+}</textarea>
+</div>
+</div>
+
+<!-- Tab 2: 有序合并 -->
+<div id="tab-merge" class="tab-content">
+<div class="step-indicator" id="stepInfo2"><strong>当前状态：</strong>请先创建两个有序链表</div>
+<div class="input-group">
+<label>链表A(非递减):</label>
+<input type="text" id="listA" value="1,3,5,7,9" style="width:200px">
+<label>链表B(非递减):</label>
+<input type="text" id="listB" value="2,4,6,8,10" style="width:200px">
+<button class="viz-btn success" onclick="initMerge()">创建链表</button>
+<button class="viz-btn warning" onclick="mergeList()">合并为非递减</button>
+<button class="viz-btn" onclick="clearList2()" style="background:#95a5a6">清空</button>
+</div>
+<div style="margin:10px 0"><strong>链表A:</strong></div>
+<div class="viz-area"><div id="listViewA"><span class="head-label">HA</span><span class="null-pointer"> → NULL</span></div></div>
+<div style="margin:10px 0"><strong>链表B:</strong></div>
+<div class="viz-area"><div id="listViewB"><span class="head-label">HB</span><span class="null-pointer"> → NULL</span></div></div>
+<div style="margin:10px 0"><strong>合并结果:</strong></div>
+<div class="viz-area"><div id="listViewC"><span class="head-label">HC</span><span class="null-pointer"> → NULL</span></div></div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 有序链表合并算法</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 合并两个非递减链表为一个非递减链表
+void MergeList(LinkList LA, LinkList LB, LinkList *LC) {
+    Student *pa = LA->next, *pb = LB->next;
+    Student *r;
+    *LC = (Student*)malloc(sizeof(Student));
+    r = *LC;
+    while(pa != NULL && pb != NULL) {
+        if(pa->data <= pb->data) {
+            r->next = pa; r = pa; pa = pa->next;
+        } else {
+            r->next = pb; r = pb; pb = pb->next;
+        }
+    }
+    r->next = pa ? pa : pb;  // 插入剩余段
+}</textarea>
+</div>
+</div>
+
+<!-- Tab 3: 约瑟夫环 -->
+<div id="tab-josephus" class="tab-content">
+<div class="step-indicator" id="stepInfo3"><strong>当前状态：</strong>请设置约瑟夫环参数</div>
+<div class="input-group">
+<label>总人数 n:</label>
+<input type="number" id="josephusN" value="8" style="width:80px">
+<label>报数 m:</label>
+<input type="number" id="josephusM" value="3" style="width:80px">
+<button class="viz-btn success" onclick="initJosephus()">创建环</button>
+<button class="viz-btn warning" onclick="stepJosephus()">出列一步</button>
+<button class="viz-btn" onclick="autoJosephus()">自动运行</button>
+<button class="viz-btn" onclick="clearList3()" style="background:#95a5a6">清空</button>
+</div>
+<div class="viz-area"><div id="josephusView">请创建约瑟夫环</div></div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 约瑟夫环算法</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 约瑟夫环 - 循环链表实现
+void Josephus(int n, int m) {
+    LinkList L = (LinkList)malloc(sizeof(Node));
+    L->next = L;  // 建立空环
+    int i;
+    for(i=1; i<=n; i++) {
+        Node *s = (Node*)malloc(sizeof(Node));
+        s->data = i; s->next = L->next; L->next = s;
+    }
+    Node *p = L->next;
+    while(p != p->next) {
+        for(i=1; i<m; i++) p = p->next;
+        printf("出列: %d\n", p->data);
+        p->next = p->next->next;
+        free(p); p = p->next;
+    }
+    printf("剩余: %d\n", p->data);
+    free(p);
+}</textarea>
+</div>
+</div>
+
+<div class="log-container" id="logArea"><div class="log-entry"><span class="log-time">[系统]</span> 虚拟仿真环境已就绪，请选择操作标签页</div></div>
+</div>
+
+<h2 class="section-title">五、实验报告要求</h2>
+<div class="info-box"><p>1. 实验题目与实验目的</p><p>2. 实验环境</p><p>3. 实验内容与完成情况（附上源程序及AI评审结果）</p><p>4. 出现的问题及AI辅助解决方案</p><p>5. 实验思考：AI代码评审对编程能力提升的帮助</p></div>
+</div>
+<div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
+
+<script>
+function addLog(msg) {
+    const logArea = document.getElementById('logArea');
+    const time = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + msg;
+    logArea.appendChild(entry);
+    logArea.scrollTop = logArea.scrollHeight;
+}
+function updateStep(id, msg) {
+    document.getElementById(id).innerHTML = '<strong>当前状态：</strong>' + msg;
+}
+function renderList(viewId, data, label) {
+    label = label || 'HEAD';
+    const view = document.getElementById(viewId);
+    if (data.length === 0) {
+        view.innerHTML = '<span class="head-label">' + label + '</span><span class="null-pointer"> → NULL</span>';
+        return;
+    }
+    let html = '<span class="head-label">' + label + '</span>';
+    data.forEach(function(v, idx) {
+        html += '<div class="node"><div class="node-data">' + v + '</div></div>';
+        if (idx < data.length - 1) html += '<span class="node-arrow">→</span>';
+    });
+    html += '<span class="node-arrow">→</span><span class="null-pointer">NULL</span>';
+    view.innerHTML = html;
+}
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// 就地逆置
+let list1 = [];
+function initReverse() {
+    const data = document.getElementById('listData1').value.split(',').map(Number);
+    list1 = data;
+    renderList('listView1', list1);
+    updateStep('stepInfo', '链表已创建: ' + list1.join('→'));
+    addLog('【操作】创建链表: ' + list1.join(','));
+}
+function reverseList() {
+    if (list1.length <= 1) { addLog('【提示】链表长度<=1，无需逆置'); return; }
+    addLog('【操作】调用 ReverseList() 就地逆置链表');
+    addLog('  算法思路: 逐个将结点从原链表摘下，插入到头结点之后');
+    
+    let reversed = list1.slice().reverse();
+    renderList('listView1', reversed);
+    updateStep('stepInfo', '逆置完成! 结果: ' + reversed.join('→'));
+    addLog('【逆置过程】');
+    for(let i=0; i<list1.length; i++) {
+        addLog('  第' + (i+1) + '步: 将结点' + list1[i] + '从原位置摘下，插入到头结点后');
+    }
+    addLog('【结果】链表已就地逆置: ' + reversed.join(','));
+}
+function clearList1() { list1=[]; renderList('listView1',[]); updateStep('stepInfo','链表已清空'); }
+
+// 有序合并
+let listA=[], listB=[];
+function initMerge() {
+    listA = document.getElementById('listA').value.split(',').map(Number);
+    listB = document.getElementById('listB').value.split(',').map(Number);
+    renderList('listViewA', listA, 'HA');
+    renderList('listViewB', listB, 'HB');
+    renderList('listViewC', [], 'HC');
+    updateStep('stepInfo2', '链表A: '+listA.join(',')+'  链表B: '+listB.join(','));
+    addLog('【操作】创建两个有序链表 A=['+listA.join(',')+'] B=['+listB.join(',')+']');
+}
+function mergeList() {
+    if(listA.length===0 && listB.length===0) { addLog('【错误】链表为空'); return; }
+    addLog('【操作】调用 MergeList() 合并两个非递减链表');
+    let merged = listA.concat(listB).sort(function(a,b){return a-b});
+    renderList('listViewC', merged, 'HC');
+    updateStep('stepInfo2', '合并完成! 结果: ' + merged.join('→'));
+    addLog('【合并过程】双指针法: 比较A和B当前结点，取较小者接入结果链表');
+    addLog('【结果】合并为非递减链表: ' + merged.join(','));
+}
+function clearList2() { listA=[];listB=[];renderList('listViewA',[]);renderList('listViewB',[]);renderList('listViewC',[]); }
+
+// 约瑟夫环
+let josephusCircle = [];
+let josephusIdx = 0;
+let josephusM_val = 3;
+function initJosephus() {
+    const n = parseInt(document.getElementById('josephusN').value);
+    josephusM_val = parseInt(document.getElementById('josephusM').value);
+    josephusCircle = [];
+    for(let i=1; i<=n; i++) josephusCircle.push(i);
+    josephusIdx = 0;
+    renderJosephus();
+    updateStep('stepInfo3', '约瑟夫环已创建: n='+n+'  m='+josephusM_val);
+    addLog('【操作】创建约瑟夫环，n='+n+'人，报数m='+josephusM_val);
+    addLog('环结构: ' + josephusCircle.join('→') + '→(回到开头)');
+}
+function renderJosephus() {
+    const view = document.getElementById('josephusView');
+    if(josephusCircle.length===0) { view.innerHTML='所有人员已出列'; return; }
+    let html = '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">';
+    josephusCircle.forEach(function(v,i) {
+        let cls = 'node';
+        if(i===josephusIdx) cls += ' highlight';
+        html += '<div class="'+cls+'"><div class="node-data">'+v+'</div></div>';
+        if(i<josephusCircle.length-1) html += '<span class="node-arrow">→</span>';
+    });
+    html += '</div>';
+    html += '<div style="margin-top:10px;color:#888">当前指针位置: 第'+(josephusIdx+1)+'个人</div>';
+    view.innerHTML = html;
+}
+function stepJosephus() {
+    if(josephusCircle.length===0) { addLog('【提示】所有人都已出列'); return; }
+    addLog('【操作】约瑟夫环出列一步: m='+josephusM_val);
+    josephusIdx = (josephusIdx + josephusM_val - 1) % josephusCircle.length;
+    const out = josephusCircle.splice(josephusIdx, 1)[0];
+    josephusIdx = josephusIdx % josephusCircle.length;
+    renderJosephus();
+    updateStep('stepInfo3', '第' + (8-josephusCircle.length+1) + '个出列: 编号 ' + out + '  剩余: ' + josephusCircle.join('→'));
+    addLog('  出列: 编号 ' + out + '  剩余人数: ' + josephusCircle.length);
+    if(josephusCircle.length===0) {
+        updateStep('stepInfo3', '约瑟夫环全部出列完毕!');
+        addLog('【完成】所有人都已出列');
+    }
+}
+function autoJosephus() {
+    if(josephusCircle.length===0) { addLog('【错误】请先创建环'); return; }
+    addLog('【操作】自动运行约瑟夫环...');
+    let step = 0;
+    const interval = setInterval(function() {
+        if(josephusCircle.length===0) {
+            clearInterval(interval);
+            addLog('【完成】约瑟夫环运行完毕');
+            return;
+        }
+        step++;
+        josephusIdx = (josephusIdx + josephusM_val - 1) % josephusCircle.length;
+        const out = josephusCircle.splice(josephusIdx, 1)[0];
+        josephusIdx = josephusCircle.length > 0 ? josephusIdx % josephusCircle.length : 0;
+        renderJosephus();
+        updateStep('stepInfo3', '第'+step+'个出列: 编号'+out+'  剩余:'+josephusCircle.join('→'));
+        addLog('  第'+step+'个出列: 编号'+out);
+    }, 800);
+}
+function clearList3() { josephusCircle=[]; renderJosephus(); updateStep('stepInfo3','约瑟夫环已清空'); }
+
+addLog('系统就绪。请选择操作标签页（就地逆置/有序合并/约瑟夫环）');
+</script>
+</body>
+</html>

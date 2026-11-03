@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>"人工智能+"数据结构虚拟仿真实验教学项目</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif;background:#f0f4f8;color:#2c3e50;line-height:1.8}
+.header{background:linear-gradient(135deg,#1a5276 0%,#2e86c1 50%,#3498db 100%);color:#fff;padding:60px 40px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 60%);animation:rotate 20s linear infinite}
+@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.header h1{font-size:2.4em;margin-bottom:10px;position:relative;z-index:1}
+.header p{font-size:1.1em;opacity:0.9;position:relative;z-index:1}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.8em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:40px 0 25px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:25px;margin:25px 0}
+.card{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.08);overflow:hidden;transition:transform 0.3s,box-shadow 0.3s}
+.card:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.15)}
+.card-header{padding:20px 25px;color:#fff;font-size:1.2em;font-weight:bold}
+.card-body{padding:20px 25px}
+.card:nth-child(1) .card-header{background:linear-gradient(135deg,#2e86c1,#3498db)}
+.card:nth-child(2) .card-header{background:linear-gradient(135deg,#16a085,#1abc9c)}
+.card:nth-child(3) .card-header{background:linear-gradient(135deg,#8e44ad,#9b59b6)}
+.card:nth-child(4) .card-header{background:linear-gradient(135deg,#d35400,#e67e22)}
+.card:nth-child(5) .card-header{background:linear-gradient(135deg,#c0392b,#e74c3c)}
+.card:nth-child(6) .card-header{background:linear-gradient(135deg,#2c3e50,#566573)}
+.experiment-link{display:inline-block;margin-top:15px;padding:10px 25px;background:#3498db;color:#fff;text-decoration:none;border-radius:6px;transition:background 0.3s}
+.experiment-link:hover{background:#2980b9}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin:30px 0}
+.feature{background:#fff;padding:25px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.06);text-align:center}
+.feature-icon{font-size:2.5em;margin-bottom:15px}
+.feature h3{color:#1a5276;margin-bottom:10px}
+.nav-bar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:15px 0;position:sticky;top:0;z-index:100}
+.nav-bar .container{display:flex;justify-content:center;gap:15px;flex-wrap:wrap}
+.nav-bar a{padding:8px 18px;background:#3498db;color:#fff;text-decoration:none;border-radius:20px;font-size:0.95em;transition:background 0.3s}
+.nav-bar a:hover{background:#2980b9}
+.footer{text-align:center;padding:30px;color:#7f8c8d;font-size:0.9em;margin-top:40px}
+.tag{display:inline-block;background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:12px;font-size:0.85em;margin:3px}
+.info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:20px 0}
+.badge{display:inline-block;background:#27ae60;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.8em;margin-left:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>"人工智能+"数据结构虚拟仿真实验教学项目</h1>
+    <p>计算机科学与技术专业 · 信息工程学院</p>
+    <div style="margin-top:15px">
+        <span class="tag">AI辅助</span>
+        <span class="tag">虚拟仿真</span>
+        <span class="tag">交互式可视化</span>
+        <span class="tag">算法动画</span>
+    </div>
+</div>
+
+<div class="nav-bar">
+    <div class="container">
+        <a href="index.html">首页</a>
+        <a href="exp1.html">实验一 单链表(一)</a>
+        <a href="exp2.html">实验二 单链表(二)</a>
+        <a href="exp3.html">实验三 栈</a>
+        <a href="exp4.html">实验四 二叉树</a>
+        <a href="exp5.html">实验五 最短路径</a>
+        <a href="exp6.html">实验六 内部排序</a>
+        <a href="prompts.html">AI提示词</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <h2 class="section-title">项目概述</h2>
+    <div class="info-box">
+        <p>本项目面向计算机科学与技术专业《数据结构》课程的实验教学，在传统6个实验项目的基础上，深度融合人工智能技术，构建"人工智能+"虚拟仿真实验教学环境。</p>
+        <p style="margin-top:10px"><strong>核心特色：</strong>每个实验页面均配备<strong>可交互的可视化实验操作台</strong>，学生可以通过点击按钮实时观察数据结构的动态变化过程——链表节点的指针移动、栈的入栈出栈动画、二叉树的遍历路径、排序的柱状图演变、最短路径的图算法执行等。同时每个页面包含完整的C语言代码展示和实时操作日志，帮助学生建立"代码-执行-结果"的完整认知链路。</p>
+    </div>
+
+    <h2 class="section-title">六大实验项目（含交互式可视化）</h2>
+    <div class="card-grid">
+        <div class="card">
+            <div class="card-header">实验一：单链表（一）<span class="badge">可视化</span></div>
+            <div class="card-body">
+                <p><strong>AI辅助学生信息管理系统</strong></p>
+                <p style="margin-top:10px"><strong>可视化功能：</strong>链表动态可视化模拟器——实时展示节点创建、插入、删除、遍历的指针变化动画，同步显示C代码和操作流程日志。</p>
+                <p style="margin-top:5px"><strong>交互方式：</strong>输入学生信息 → 点击按钮 → 观察链表变化动画 → 查看对应代码</p>
+                <a href="exp1.html" class="experiment-link">进入实验</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">实验二：单链表（二）<span class="badge">可视化</span></div>
+            <div class="card-body">
+                <p><strong>AI链表高级操作实验室</strong></p>
+                <p style="margin-top:10px"><strong>可视化功能：</strong>链表就地逆置动画演示、有序链表合并可视化、约瑟夫环循环链表模拟——支持逐步执行和自动播放。</p>
+                <p style="margin-top:5px"><strong>交互方式：</strong>输入数据 → 选择算法 → 逐步/自动执行 → 观察指针变化</p>
+                <a href="exp2.html" class="experiment-link">进入实验</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">实验三：栈<span class="badge">可视化</span></div>
+            <div class="card-body">
+                <p><strong>AI栈应用仿真平台</strong></p>
+                <p style="margin-top:10px"><strong>可视化功能：</strong>栈操作可视化模拟器（入栈出栈动画）、两栈共享空间可视化、奇偶数据分类仿真、表达式求值演示。</p>
+                <p style="margin-top:5px"><strong>交互方式：</strong>输入数据 → 执行栈操作 → 观察栈顶指针移动动画</p>
+                <a href="exp3.html" class="experiment-link">进入实验</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">实验四：二叉树<span class="badge">可视化</span></div>
+            <div class="card-body">
+                <p><strong>AI二叉树可视化与交互平台</strong></p>
+                <p style="margin-top:10px"><strong>可视化功能：</strong>二叉树图形化构建与展示、四种遍历方式动画演示（先序/中序/后序/层序）、非递归遍历栈状态实时追踪。</p>
+                <p style="margin-top:5px"><strong>交互方式：</strong>输入先序序列 → 构建二叉树 → 选择遍历方式 → 观看遍历动画</p>
+                <a href="exp4.html" class="experiment-link">进入实验</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">实验五：最短路径<span class="badge">可视化</span></div>
+            <div class="card-body">
+                <p><strong>AI旅游景点导游模拟系统</strong></p>
+                <p style="margin-top:10px"><strong>可视化功能：</strong>Dijkstra算法可视化执行引擎——逐步展示距离更新过程，图节点颜色标注（未访问/已访问/当前处理），距离表实时更新。</p>
+                <p style="margin-top:5px"><strong>交互方式：</strong>加载地图 → 选择起终点 → 运行/逐步执行 → 观察算法过程</p>
+                <a href="exp5.html" class="experiment-link">进入实验</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">实验六：内部排序<span class="badge">可视化</span></div>
+            <div class="card-body">
+                <p><strong>AI排序算法可视化实验室</strong></p>
+                <p style="margin-top:10px"><strong>可视化功能：</strong>排序过程动态柱状图可视化——实时高亮比较和交换的元素，支持插入/选择/冒泡/快速四种排序算法的动画对比，含比较次数和交换次数统计。</p>
+                <p style="margin-top:5px"><strong>交互方式：</strong>输入/生成数组 → 选择排序算法 → 运行/逐步执行 → 观看排序动画</p>
+                <a href="exp6.html" class="experiment-link">进入实验</a>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">AI+教学特色</h2>
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon">&#9733;</div>
+            <h3>交互式可视化</h3>
+            <p>所有6个实验均配备可交互的可视化操作台，学生通过点击按钮实时观察数据结构的动态变化过程。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">&#9670;</div>
+            <h3>代码同步显示</h3>
+            <p>每个实验页面展示对应的C语言核心代码，操作执行时同步高亮当前执行行，建立代码与可视化的映射。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">&#9734;</div>
+            <h3>实时操作日志</h3>
+            <p>每个操作都生成详细的步骤日志，记录算法执行的每一步操作和状态变化，便于学生回溯理解。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">&#9731;</div>
+            <h3>AI智能辅助</h3>
+            <p>集成AI代码生成、智能调试、概念问答等能力，为学生提供7x24小时的个性化辅导。</p>
+        </div>
+    </div>
+
+    <h2 class="section-title">技术架构</h2>
+    <div class="info-box">
+        <p><strong>前端展示层：</strong>HTML5 + CSS3 + JavaScript（原生DOM操作 + Canvas），实现交互式可视化界面。</p>
+        <p><strong>AI引擎层：</strong>集成大语言模型API，提供代码生成、智能问答、代码评审等能力。</p>
+        <p><strong>仿真引擎层：</strong>JavaScript算法实现数据结构动态可视化，支持逐步执行和动画播放。</p>
+        <p><strong>数据存储层：</strong>LocalStorage实现前端数据持久化，支持学习进度保存。</p>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目 · "人工智能+"创新教学实践</p>
+</div>
+
+</body>
+</html>

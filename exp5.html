@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实验五：最短路径 —— AI+虚拟仿真实验</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif;background:#f0f4f8;color:#2c3e50;line-height:1.8}
+.header{background:linear-gradient(135deg,#1a5276 0%,#2e86c1 50%,#3498db 100%);color:#fff;padding:40px;text-align:center}
+.header h1{font-size:2em;margin-bottom:8px}
+.header p{opacity:0.9}
+.nav-bar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:12px 0}
+.nav-bar .container{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.nav-bar a{padding:7px 16px;background:#3498db;color:#fff;text-decoration:none;border-radius:20px;font-size:0.9em;transition:background 0.3s}
+.nav-bar a:hover{background:#2980b9}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.6em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:35px 0 20px}
+.sub-title{font-size:1.3em;color:#2c3e50;margin:25px 0 12px;padding-left:10px;border-left:3px solid #1abc9c}
+.info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.ai-box{background:#f0f8e8;border-left:4px solid #1abc9c;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.trad-box{background:#fef9e7;border-left:4px solid #f39c12;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.table{width:100%;border-collapse:collapse;margin:15px 0}
+.table th,.table td{padding:12px 15px;text-align:left;border-bottom:1px solid #ddd}
+.table th{background:#3498db;color:#fff}
+tr:hover{background:#f5f5f5}
+.footer{text-align:center;padding:25px;color:#7f8c8d;font-size:0.9em;margin-top:30px}
+ul{padding-left:20px}li{margin-bottom:6px}
+.viz-container{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);padding:25px;margin:20px 0}
+.viz-title{font-size:1.2em;color:#1a5276;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #eef2f7}
+.viz-controls{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
+.viz-btn{padding:8px 18px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.95em;transition:all 0.2s}
+.viz-btn:hover{background:#2980b9;transform:translateY(-1px)}
+.viz-btn.danger{background:#e74c3c}
+.viz-btn.danger:hover{background:#c0392b}
+.viz-btn.success{background:#27ae60}
+.viz-btn.success:hover{background:#1e8449}
+.viz-btn.warning{background:#f39c12}
+.viz-btn.warning:hover{background:#d68910}
+.viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.input-group{display:flex;gap:10px;margin:10px 0;align-items:center;flex-wrap:wrap}
+.input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
+.input-group label{font-weight:bold;color:#555}
+.step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
+.tab-bar{display:flex;gap:5px;margin-bottom:15px}
+.tab-btn{padding:8px 16px;background:#eef2f7;border:none;border-radius:6px 6px 0 0;cursor:pointer;font-size:0.95em;color:#555}
+.tab-btn.active{background:#3498db;color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
+.code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
+.code-keyword{color:#9b59b6}
+.code-type{color:#3498db}
+.code-comment{color:#7f8c8d;font-style:italic}
+.code-string{color:#27ae60}
+.code-number{color:#e67e22}
+.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
+.log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:#666;margin-right:8px}
+
+/* 图可视化 */
+.graph-container{position:relative;width:100%;height:400px;background:#fafbfc;border:2px dashed #dce1e8;border-radius:8px;overflow:hidden}
+.graph-node{position:absolute;width:50px;height:50px;border-radius:50%;background:#3498db;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1em;border:3px solid #3498db;transform:translate(-50%,-50%);z-index:2;transition:all 0.3s}
+.graph-node.start{background:#27ae60;border-color:#27ae60;box-shadow:0 0 15px rgba(39,174,96,0.5)}
+.graph-node.end{background:#e74c3c;border-color:#e74c3c;box-shadow:0 0 15px rgba(231,76,60,0.5)}
+.graph-node.visited{background:#9b59b6;border-color:#9b59b6}
+.graph-node.current{background:#f1c40f;color:#2c3e50;border-color:#f39c12;box-shadow:0 0 15px rgba(241,196,15,0.5)}
+.graph-edge{position:absolute;height:2px;background:#bdc3c7;transform-origin:0 50%;z-index:1}
+.graph-edge.highlight{background:#e74c3c;height:3px}
+.graph-weight{position:absolute;background:#fff;padding:2px 6px;border-radius:10px;font-size:0.8em;font-weight:bold;color:#2c3e50;border:1px solid #ddd;z-index:3;transform:translate(-50%,-50%)}
+.graph-weight.highlight{background:#e74c3c;color:#fff}
+
+/* 距离表 */
+.dist-table{width:100%;border-collapse:collapse;margin:15px 0}
+.dist-table th,.dist-table td{padding:8px 12px;text-align:center;border:1px solid #ddd}
+.dist-table th{background:#3498db;color:#fff}
+.dist-table tr:hover{background:#f5f5f5}
+.dist-table .s-set{background:#d5f5e3}
+.dist-table .current-row{background:#fff3cd}
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+</head>
+<body>
+<div class="header"><h1>实验五：最短路径</h1><p>AI旅游景点导游模拟系统 · 虚拟仿真实验教学</p></div>
+<div class="nav-bar"><div class="container">
+<a href="index.html">首页</a><a href="exp1.html">实验一 单链表(一)</a><a href="exp2.html">实验二 单链表(二)</a>
+<a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">实验五 最短路径</a>
+<a href="exp6.html">实验六 内部排序</a><a href="prompts.html">AI提示词</a>
+</div></div>
+<div class="container">
+<h2 class="section-title">一、实验基本信息</h2>
+<table class="table"><tr><th>项目</th><th>内容</th></tr>
+<tr><td>实验名称</td><td>最短路径 —— AI旅游景点导游模拟系统</td></tr>
+<tr><td>课程名称</td><td>数据结构</td></tr><tr><td>专业方向</td><td>计算机科学与技术</td></tr>
+<tr><td>实验学时</td><td>3学时</td></tr><tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
+
+<h2 class="section-title">二、传统实验内容</h2>
+<div class="trad-box"><h3>原始实验要求</h3>
+<p><strong>实验目的：</strong>利用图的最短路径原理为用户提供路径咨询，掌握求最短路径的算法并编程实现。</p>
+<p><strong>实验内容：</strong>设计一个旅游景点导游模拟程序，为来访的客人提供景点最短路径的信息查询服务。任意选取n个城市，构成一个有向带权图，图中顶点表示城市，边上的权值表示两点间的距离，根据用户指定的始点和终点输出相应的最短路径。</p>
+<p style="margin-top:10px"><strong>实现提示：</strong>咨询以用户和计算机的对话方式进行，由用户输入起始点和终点，输出信息：最短路径是多少？并指出所经过城市。存储结构可选用邻接矩阵。</p></div>
+
+<h2 class="section-title">三、AI+增强实验设计</h2>
+<div class="ai-box"><h3>人工智能融合方案</h3>
+<p>最短路径问题是图论的经典应用。通过AI增强的导游模拟系统，将抽象的图算法与真实的旅游场景结合，让学生在趣味化的情境中掌握Dijkstra算法。Dijkstra算法可视化执行引擎逐步展示算法的每一步执行过程。</p></div>
+
+<h2 class="section-title">四、可视化实验操作台</h2>
+<div class="viz-container">
+<div class="viz-title">Dijkstra最短路径算法可视化</div>
+<div class="input-group">
+<label>起点:</label>
+<select id="startNode"><option value="0">A(北京)</option><option value="1">B(上海)</option><option value="2">C(广州)</option><option value="3">D(成都)</option><option value="4">E(武汉)</option></select>
+<label>终点:</label>
+<select id="endNode"><option value="4">E(武汉)</option><option value="0">A(北京)</option><option value="1">B(上海)</option><option value="2">C(广州)</option><option value="3">D(成都)</option></select>
+<button class="viz-btn success" onclick="runDijkstra()">运行Dijkstra算法</button>
+<button class="viz-btn" onclick="stepDijkstra()" style="background:#9b59b6">逐步执行</button>
+<button class="viz-btn" onclick="loadMap()" style="background:#27ae60">加载地图</button>
+</div>
+
+<div class="graph-container" id="graphView">
+<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#95a5a6">请点击"加载地图"显示旅游景点图</div>
+</div>
+
+<div style="margin-top:15px"><strong>Dijkstra距离表:</strong></div>
+<table class="dist-table" id="distTable">
+<tr><th>顶点</th><th>A(北京)</th><th>B(上海)</th><th>C(广州)</th><th>D(成都)</th><th>E(武汉)</th></tr>
+<tr><td>距离dist[]</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>前驱path[]</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>S集合</td><td>否</td><td>否</td><td>否</td><td>否</td><td>否</td></tr>
+</table>
+
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// Dijkstra算法代码</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 求顶点v0到其余顶点的最短路径
+void ShortestPath_DJ(Graph G, int v0) {
+    int v, w, i, j, min;
+    int final[MAX];     // final[w]=1表示求得最短路径
+    int D[MAX];         // D[w]表示当前最短路径长度
+    int path[MAX];      // path[w]表示前驱顶点
+    
+    for(v=0; v<G.vexnum; v++) {
+        final[v] = 0; D[v] = G.arcs[v0][v];
+        if(D[v] < INFINITY) path[v] = v0;
+        else path[v] = -1;
+    }
+    D[v0] = 0; final[v0] = 1;
+    
+    for(i=1; i<G.vexnum; i++) {
+        min = INFINITY;
+        for(w=0; w<G.vexnum; w++)
+            if(!final[w] && D[w]<min) { v=w; min=D[w]; }
+        final[v] = 1;
+        for(w=0; w<G.vexnum; w++)
+            if(!final[w] && min+G.arcs[v][w]<D[w]) {
+                D[w] = min+G.arcs[v][w];
+                path[w] = v;
+            }
+    }
+}</textarea>
+</div>
+</div>
+
+<h2 class="section-title">五、实验报告要求</h2>
+<div class="info-box"><p>1. 实验题目与实验目的</p><p>2. 实验环境</p><p>3. 实验内容与完成情况（附上源程序及算法执行过程截图）</p><p>4. 出现的问题及AI辅助解决方案</p><p>5. 实验思考：Dijkstra算法的适用范围与局限性</p></div>
+</div>
+<div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
+
+<script>
+// 图数据 - 5个城市
+const cities = ['A(北京)','B(上海)','C(广州)','D(成都)','E(武汉)'];
+const cityShort = ['A','B','C','D','E'];
+// 邻接矩阵 (INF=9999)
+const INF = 9999;
+let adjMatrix = [
+    [0, 12, 9999, 15, 10],
+    [12, 0, 14, 9999, 8],
+    [9999, 14, 0, 18, 16],
+    [15, 9999, 18, 0, 9999],
+    [10, 8, 16, 9999, 0]
+];
+// 城市节点位置 (百分比)
+const nodePositions = [
+    {x:20, y:20}, {x:80, y:20}, {x:80, y:80}, {x:20, y:80}, {x:50, y:50}
+];
+// 边和权重
+const edges = [
+    [0,1,12],[0,4,10],[1,4,8],[1,2,14],[2,3,18],[0,3,15]
+];
+
+let dijkstraState = null;
+let stepMode = false;
+let currentStep = 0;
+let steps = [];
+
+function loadMap() {
+    const view = document.getElementById('graphView');
+    let html = '';
+    
+    // 画边
+    edges.forEach(function(e) {
+        let from = nodePositions[e[0]];
+        let to = nodePositions[e[1]];
+        let weight = e[2];
+        
+        // 计算边的角度和位置
+        let dx = to.x - from.x;
+        let dy = to.y - from.y;
+        let len = Math.sqrt(dx*dx + dy*dy);
+        let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        
+        // 缩短边避免覆盖节点
+        let startX = from.x + (dx/len)*3;
+        let startY = from.y + (dy/len)*3;
+        let endX = to.x - (dx/len)*3;
+        let endY = to.y - (dy/len)*3;
+        
+        html += '<div class="graph-edge" style="' +
+            'left:' + startX + '%;top:' + startY + '%;' +
+            'width:' + Math.sqrt((endX-startX)**2+(endY-startY)**2) + '%;' +
+            'transform:rotate(' + angle + 'deg);' +
+            '"></div>';
+        
+        // 权重标签位置
+        let midX = (from.x + to.x) / 2;
+        let midY = (from.y + to.y) / 2;
+        html += '<div class="graph-weight" style="left:' + midX + '%;top:' + (midY-3) + '%">' + weight + '</div>';
+    });
+    
+    // 画节点
+    nodePositions.forEach(function(pos, i) {
+        html += '<div class="graph-node" id="node-' + i + '" style="left:' + pos.x + '%;top:' + pos.y + '%">' + cityShort[i] + '</div>';
+    });
+    
+    view.innerHTML = html;
+    addLog('【操作】加载旅游景点地图: ' + cities.join(', '));
+    addLog('【图结构】已构建含5个顶点、6条边的无向带权图');
+}
+
+function runDijkstra() {
+    if(!document.getElementById('node-0')) { loadMap(); }
+    const start = parseInt(document.getElementById('startNode').value);
+    const end = parseInt(document.getElementById('endNode').value);
+    
+    // 执行Dijkstra算法并记录步骤
+    steps = [];
+    const n = 5;
+    const final = new Array(n).fill(false);
+    const D = adjMatrix[start].slice();
+    const path = new Array(n).fill(-1);
+    
+    D[start] = 0;
+    steps.push({type:'init', D:D.slice(), final:final.slice(), path:path.slice(), current:-1});
+    
+    for(let i=1; i<n; i++) {
+        let min = INF, v = -1;
+        for(let w=0; w<n; w++) {
+            if(!final[w] && D[w]<min) { v=w; min=D[w]; }
+        }
+        if(v === -1) break;
+        final[v] = true;
+        
+        steps.push({type:'select', D:D.slice(), final:final.slice(), path:path.slice(), current:v});
+        
+        for(let w=0; w<n; w++) {
+            if(!final[w] && adjMatrix[v][w]<INF && D[v]+adjMatrix[v][w]<D[w]) {
+                D[w] = D[v] + adjMatrix[v][w];
+                path[w] = v;
+            }
+        }
+        steps.push({type:'update', D:D.slice(), final:final.slice(), path:path.slice(), current:v});
+    }
+    
+    currentStep = 0;
+    stepMode = false;
+    showStep();
+    
+    // 输出路径
+    let route = [];
+    let p = end;
+    while(p !== -1) { route.unshift(cityShort[p]); p = path[p]; }
+    
+    addLog('【操作】Dijkstra算法: 起点=' + cityShort[start] + ' 终点=' + cityShort[end]);
+    addLog('【结果】最短路径: ' + route.join('→') + '  距离: ' + D[end]);
+}
+
+function stepDijkstra() {
+    if(steps.length === 0) { runDijkstra(); }
+    if(currentStep < steps.length) {
+        showStep();
+        currentStep++;
+    } else {
+        addLog('【完成】算法执行完毕');
+    }
+}
+
+function showStep() {
+    const step = steps[currentStep];
+    // 更新节点样式
+    nodePositions.forEach(function(_, i) {
+        const el = document.getElementById('node-' + i);
+        el.className = 'graph-node';
+        if(step.final[i]) el.classList.add('visited');
+        if(step.current === i) el.classList.add('current');
+    });
+    
+    // 更新距离表
+    const table = document.getElementById('distTable');
+    const distRow = table.rows[1];
+    const pathRow = table.rows[2];
+    const sRow = table.rows[3];
+    
+    step.D.forEach(function(d, i) {
+        distRow.cells[i+1].textContent = d === INF ? '∞' : d;
+        pathRow.cells[i+1].textContent = step.path[i] === -1 ? '-' : cityShort[step.path[i]];
+        sRow.cells[i+1].textContent = step.final[i] ? '是' : '否';
+        
+        if(step.final[i]) {
+            distRow.cells[i+1].classList.add('s-set');
+            sRow.cells[i+1].classList.add('s-set');
+        } else {
+            distRow.cells[i+1].classList.remove('s-set');
+            sRow.cells[i+1].classList.remove('s-set');
+        }
+    });
+    
+    const typeNames = {init:'初始化', select:'选择顶点', update:'更新距离'};
+    addLog('【步骤' + currentStep + '】' + (typeNames[step.type]||'') + ': 当前顶点=' + (step.current>=0?cityShort[step.current]:'无'));
+}
+
+function addLog(msg) {
+    const logArea = document.getElementById('logArea') || document.createElement('div');
+    if(!logArea.id) {
+        logArea.id = 'logArea';
+        logArea.className = 'log-container';
+        document.querySelector('.viz-container').appendChild(logArea);
+    }
+    const time = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + msg;
+    logArea.appendChild(entry);
+    logArea.scrollTop = logArea.scrollHeight;
+}
+
+// 初始化日志
+addLog('系统就绪。请点击"加载地图"显示旅游景点图，然后运行Dijkstra算法。');
+</script>
+</body>
+</html>

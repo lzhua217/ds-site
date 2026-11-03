@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI提示词 —— "人工智能+"数据结构虚拟仿真实验教学项目</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif;background:#f0f4f8;color:#2c3e50;line-height:1.8}
+.header{background:linear-gradient(135deg,#1a5276 0%,#2e86c1 50%,#3498db 100%);color:#fff;padding:40px;text-align:center}
+.header h1{font-size:2em;margin-bottom:8px}
+.header p{opacity:0.9}
+.nav-bar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:12px 0}
+.nav-bar .container{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.nav-bar a{padding:7px 16px;background:#3498db;color:#fff;text-decoration:none;border-radius:20px;font-size:0.9em;transition:background 0.3s}
+.nav-bar a:hover{background:#2980b9}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.6em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:35px 0 20px}
+.sub-title{font-size:1.3em;color:#2c3e50;margin:25px 0 12px;padding-left:10px;border-left:3px solid #1abc9c}
+.info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.prompt-box{background:#f8f9fa;border:2px dashed #3498db;padding:20px;border-radius:8px;margin:15px 0}
+.prompt-box h4{color:#2980b9;margin-bottom:10px}
+.prompt-content{background:#2c3e50;color:#ecf0f1;padding:15px;border-radius:6px;font-family:Consolas,Monaco,monospace;font-size:0.9em;white-space:pre-wrap;overflow-x:auto;margin:10px 0;line-height:1.6}
+.copy-btn{display:inline-block;padding:5px 15px;background:#3498db;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85em;margin-top:5px}
+.footer{text-align:center;padding:25px;color:#7f8c8d;font-size:0.9em;margin-top:30px}
+ul{padding-left:20px}
+li{margin-bottom:6px}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>AI提示词（Prompts）</h1>
+    <p>用于指导AI生成虚拟仿真实验交互代码的提示词集合</p>
+</div>
+
+<div class="nav-bar">
+    <div class="container">
+        <a href="index.html">首页</a>
+        <a href="exp1.html">实验一 单链表(一)</a>
+        <a href="exp2.html">实验二 单链表(二)</a>
+        <a href="exp3.html">实验三 栈</a>
+        <a href="exp4.html">实验四 二叉树</a>
+        <a href="exp5.html">实验五 最短路径</a>
+        <a href="exp6.html">实验六 内部排序</a>
+        <a href="prompts.html">AI提示词</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <h2 class="section-title">提示词使用说明</h2>
+    <div class="info-box">
+        <p>以下提示词（Prompts）用于指导大语言模型（如ChatGPT、Claude、文心一言等）生成"人工智能+"数据结构虚拟仿真实验的交互式Web代码。使用时，将对应实验的提示词复制到大语言模型对话框中，即可生成相应的HTML/JavaScript交互代码。</p>
+        <p style="margin-top:10px"><strong>使用建议：</strong></p>
+        <ul>
+            <li>可根据实际需求修改提示词中的具体参数和细节</li>
+            <li>建议分步骤使用提示词，先生成基础框架，再逐步添加功能</li>
+            <li>生成代码后可在浏览器中直接打开测试</li>
+            <li>如需集成到教学平台，可进一步调整UI和交互逻辑</li>
+        </ul>
+    </div>
+
+    <!-- 实验一提示词 -->
+    <h2 class="section-title">实验一：单链表（一）—— AI提示词</h2>
+
+    <div class="prompt-box">
+        <h4>提示词1：AI代码辅助生成器</h4>
+        <p><strong>用途：</strong>生成学生信息管理系统的C语言代码框架</p>
+        <div class="prompt-content">请帮我生成一个C语言学生信息管理系统代码框架，使用单链表实现。要求：
+1. 定义学生节点结构体，包含学号(char[20])、姓名(char[20])、年龄(int)、性别(char[10])四个字段
+2. 实现以下函数：
+   - createNode()：创建新节点
+   - insertAtEnd()：在链表尾部插入节点
+   - display()：遍历输出所有学生信息
+   - searchByID()：按学号查找学生
+   - deleteByID()：按学号删除学生
+   - createMenu()：显示菜单界面
+3. main函数中实现菜单驱动的交互逻辑
+4. 代码需包含完整的注释说明
+5. 使用VC6.0兼容的C语法
+请输出完整的可编译代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词2：链表动态可视化模拟器（前端）</h4>
+        <p><strong>用途：</strong>生成单链表操作的Web可视化界面</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个单链表动态可视化模拟器，要求：
+1. 页面布局：左侧为操作面板（按钮：创建节点、插入、删除、查询、遍历），右侧为链表可视化区域
+2. 链表节点用圆角矩形卡片展示，每个卡片显示学号、姓名、年龄、性别
+3. 节点之间用箭头连接，箭头用SVG或Canvas绘制
+4. 操作动画效果：
+   - 插入节点：新节点从右侧滑入并连接到链表
+   - 删除节点：节点缩小消失并重新连接前后节点
+   - 遍历：高亮当前访问的节点，依次闪烁
+5. 下方显示当前链表状态的文本描述
+6. 代码完整可运行，保存为单个HTML文件
+请输出完整的HTML代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词3：AI智能调试助手</h4>
+        <p><strong>用途：</strong>生成代码错误检测与分析功能</p>
+        <div class="prompt-content">请设计一个C语言单链表代码的智能调试分析器（用JavaScript实现），要求：
+1. 提供一个文本输入框，学生粘贴C语言代码
+2. 提供"AI调试"按钮，点击后分析代码中的常见问题：
+   - 内存泄漏检测（malloc后未free）
+   - 指针悬空检测（使用已释放的指针）
+   - 死循环检测（链表遍历中缺少移动指针）
+   - 空指针解引用检测
+   - 语法错误提示
+3. 分析结果以彩色列表形式展示（错误红色、警告黄色、建议蓝色）
+4. 每个问题给出具体的修复建议
+5. 界面美观，支持代码高亮
+请输出完整的HTML+JavaScript代码。</div>
+    </div>
+
+    <!-- 实验二提示词 -->
+    <h2 class="section-title">实验二：单链表（二）—— AI提示词</h2>
+
+    <div class="prompt-box">
+        <h4>提示词1：算法逐步动画演示引擎</h4>
+        <p><strong>用途：</strong>生成单链表逆置和合并的可视化动画</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个单链表高级操作可视化演示页面，包含两个功能模块：
+
+【模块一：单链表就地逆置】
+1. 先生成一个包含5-8个节点的有序链表
+2. 提供"逐步逆置"按钮，每点击一次完成一步逆置操作
+3. 每步高亮显示：当前处理的节点、前驱节点、后继节点、反转的指针
+4. 用不同颜色标注：绿色=已逆置部分、黄色=当前处理、蓝色=未处理部分
+5. 底部显示当前步骤的文字说明和代码行高亮
+
+【模块二：有序链表合并】
+1. 生成两个有序链表（如 1->3->5->7 和 2->4->6->8）
+2. 提供"逐步合并"按钮，每步高亮显示两个链表中当前比较的节点
+3. 合并结果链表用动画逐个生成节点
+4. 提供"非递减合并"和"非递增合并"两个模式切换
+
+请输出完整的HTML代码，包含所有CSS和JavaScript。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词2：交互式链表编辑器</h4>
+        <p><strong>用途：</strong>生成拖拽式链表构建工具</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个交互式链表编辑器，要求：
+1. 画布区域：学生可以拖拽"节点模板"到画布上创建链表节点
+2. 每个节点可编辑内容（学号、姓名等字段）
+3. 学生可以用连线工具连接节点，设置指针方向
+4. 提供操作按钮：
+   - 插入节点：在指定节点后插入新节点
+   - 删除节点：选中节点后删除
+   - 逆置链表：一键展示逆置过程
+   - 合并链表：加载第二个链表并合并
+5. 实时显示链表的文本表示（如 1->2->3->NULL）
+6. 支持撤销/重做操作
+请输出完整的HTML代码。</div>
+    </div>
+
+    <!-- 实验三提示词 -->
+    <h2 class="section-title">实验三：栈 —— AI提示词</h2>
+
+    <div class="prompt-box">
+        <h4>提示词1：栈操作可视化模拟器</h4>
+        <p><strong>用途：</strong>生成栈操作的Web可视化界面</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个栈操作可视化模拟器，要求：
+1. 页面展示两个共享存储区的栈（双栈共享数组）
+2. 栈用垂直堆叠的色块表示，每个色块显示栈顶元素值
+3. 操作按钮：
+   - push1(x)：元素x入栈1（从左侧底部入栈）
+   - pop1()：栈1出栈
+   - push2(x)：元素x入栈2（从右侧底部入栈）
+   - pop2()：栈2出栈
+   - peek1()/peek2()：查看栈顶
+4. 动画效果：入栈时元素从上方落下，出栈时元素飞出
+5. 共享空间用不同颜色区分栈1（蓝色）和栈2（橙色）
+6. 显示栈满/栈空的判断条件和当前状态
+7. 提供数据分类功能：输入一组数字，自动按奇偶分别入栈1和栈2
+请输出完整的HTML代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词2：AI表达式求值分步助手</h4>
+        <p><strong>用途：</strong>生成表达式求值的分步可视化</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个表达式求值可视化助手，要求：
+1. 输入框：学生输入中缀表达式（如 3+5*2-(8/4) ）
+2. 分两步展示：
+   第一步：中缀表达式转后缀表达式
+   - 逐字符扫描输入表达式
+   - 显示栈的变化（运算符栈）
+   - 每步标注：当前字符、栈顶运算符优先级比较、出栈/入栈操作
+   - 输出后缀表达式结果
+   第二步：后缀表达式求值
+   - 逐个处理后缀表达式的元素
+   - 显示操作数栈的变化
+   - 每步标注：当前元素、栈操作、计算结果
+   - 输出最终结果
+3. 每一步用表格形式展示，当前行高亮
+4. 提供"下一步""上一步""自动播放"控制按钮
+请输出完整的HTML代码。</div>
+    </div>
+
+    <!-- 实验四提示词 -->
+    <h2 class="section-title">实验四：二叉树 —— AI提示词</h2>
+
+    <div class="prompt-box">
+        <h4>提示词1：二叉树交互式可视化构建器</h4>
+        <p><strong>用途：</strong>生成二叉树的Web可视化构建和遍历演示</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个二叉树交互式可视化平台，要求：
+1. 使用Canvas或SVG绘制二叉树，节点用圆形表示，边用直线连接
+2. 输入框：学生输入先序序列（如 ABC##D##E#F## 其中#表示空节点）
+3. 点击"构建二叉树"按钮，动画构建二叉树：
+   - 根节点首先出现
+   - 然后依次添加左子节点和右子节点
+   - 每个节点出现时有缩放动画
+4. 提供四种遍历按钮：
+   - 先序遍历（根-左-右）
+   - 中序遍历（左-根-右）
+   - 后序遍历（左-右-根）
+   - 层序遍历（按层）
+5. 遍历动画：
+   - 当前访问节点用黄色高亮
+   - 已访问节点用绿色标记
+   - 遍历路径用连线高亮
+   - 遍历序列在下方依次显示
+6. 同时显示递归调用栈的变化（用栈的可视化展示）
+7. 提供"求叶子结点个数""求树的高度"功能
+请输出完整的HTML代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词2：AI遍历路径追踪器（非递归）</h4>
+        <p><strong>用途：</strong>展示非递归遍历中栈的变化</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建二叉树非递归遍历的可视化追踪器，要求：
+1. 左侧展示二叉树图形（静态已构建好的树）
+2. 右侧展示栈的可视化（垂直堆叠的卡片）
+3. 选择遍历方式：中序遍历（非递归）
+4. 点击"逐步执行"按钮：
+   - 左侧树中当前处理的节点高亮
+   - 右侧栈显示当前栈内容（入栈操作时节点加入栈顶，出栈时节点从栈顶移除）
+   - 底部显示当前执行的代码行和说明文字
+5. 代码显示区：
+   - 显示非递归中序遍历的C代码
+   - 当前执行的代码行高亮
+   - 指针变量值实时更新
+6. 提供"自动播放"和"调速"控制
+请输出完整的HTML代码。</div>
+    </div>
+
+    <!-- 实验五提示词 -->
+    <h2 class="section-title">实验五：最短路径 —— AI提示词</h2>
+
+    <div class="prompt-box">
+        <h4>提示词1：Dijkstra算法可视化执行引擎</h4>
+        <p><strong>用途：</strong>生成Dijkstra算法的逐步可视化演示</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个Dijkstra最短路径算法可视化引擎，要求：
+1. 使用Canvas绘制带权有向图：
+   - 城市用圆形节点表示，节点内显示城市名
+   - 路径用带箭头的有向边表示，边上显示距离权值
+   - 提供预设地图（如6-8个城市的旅游路线图）
+2. 用户选择起点和终点城市
+3. 点击"执行Dijkstra算法"按钮，逐步展示算法执行过程：
+   - 未访问节点：灰色
+   - 当前处理的节点：黄色高亮
+   - 已确定最短路径的节点：绿色
+   - 终点节点：红色闪烁
+   - 当前最短路径：蓝色粗线高亮
+4. 右侧面板实时显示：
+   - dist[]数组（各节点当前最短距离）
+   - prev[]数组（前驱节点）
+   - S集合（已确定最短路径的节点集合）
+   - 当前步骤说明文字
+5. 提供"下一步""自动播放""重置"控制按钮
+6. 算法结束后显示完整最短路径和总距离
+请输出完整的HTML代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词2：交互式地图编辑器</h4>
+        <p><strong>用途：</strong>生成图结构的交互式编辑工具</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个旅游景点地图编辑器，要求：
+1. Canvas画布区域：
+   - 点击画布添加城市节点（可拖拽移动位置）
+   - 点击两个节点之间创建有向边（可设置权值/距离）
+   - 选中边可修改权值
+   - 选中节点可删除
+2. 工具栏按钮：
+   - 添加城市模式
+   - 添加路径模式
+   - 编辑权值模式
+   - 删除模式
+3. 上方显示图的邻接矩阵（实时更新）
+4. "运行最短路径"按钮：选择起点终点，展示Dijkstra算法结果
+5. 保存/加载地图功能（使用localStorage）
+6. 提供预设地图模板（如"北京市旅游景点""浙江省旅游景点"）
+请输出完整的HTML代码。</div>
+    </div>
+
+    <!-- 实验六提示词 -->
+    <h2 class="section-title">实验六：内部排序 —— AI提示词</h2>
+
+    <div class="prompt-box">
+        <h4>提示词1：排序过程动态可视化引擎</h4>
+        <p><strong>用途：</strong>生成多种排序算法的动画可视化</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个排序算法可视化实验室，要求：
+1. 页面布局：上方为控制栏，中间为排序可视化区域，下方为统计面板
+2. 可视化区域：
+   - 用柱状图表示数组元素，高度对应数值大小
+   - 默认颜色：蓝色
+   - 比较中的元素：橙色高亮
+   - 交换/移动的元素：红色高亮
+   - 已排序的元素：绿色
+   - 当前基准元素（快排）：紫色
+3. 支持算法选择：
+   - 直接插入排序
+   - 简单选择排序
+   - 冒泡排序
+   - 快速排序
+   - 归并排序
+4. 控制按钮：
+   - 生成随机数组（可设置数组大小：10-50）
+   - 生成正序/逆序数组
+   - 开始排序
+   - 暂停/继续
+   - 重置
+   - 调速滑块（慢->快）
+5. 统计面板实时显示：
+   - 关键字比较次数
+   - 关键字移动（交换）次数
+   - 当前排序算法名称
+6. 排序完成后显示总结信息
+请输出完整的HTML代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词2：排序性能AI对比分析</h4>
+        <p><strong>用途：</strong>生成排序算法性能对比分析报告</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个排序算法性能对比分析工具，要求：
+1. 测试配置区：
+   - 选择测试数据集类型：随机/正序/逆序/部分有序/几乎有序
+   - 设置数据规模：100/500/1000/5000/10000
+   - 选择要对比的排序算法（多选）
+2. 点击"开始测试"按钮：
+   - 对每个算法执行排序并统计：
+     * 比较次数
+     * 交换/移动次数
+     * 执行时间（毫秒）
+   - 用进度条动画展示测试进度
+3. 结果展示区：
+   - 表格展示各算法的各项指标对比
+   - 柱状图对比各算法的比较次数和移动次数
+   - 生成文字分析报告（自动分析各算法在不同数据特征下的表现优劣）
+4. 提供"不同数据规模下性能变化"图表（X轴为数据规模，Y轴为执行时间）
+5. 底部给出AI建议：针对不同数据特征推荐最优排序算法
+请输出完整的HTML代码。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>提示词3：AI排序竞赛模式</h4>
+        <p><strong>用途：</strong>生成排序算法竞赛游戏</p>
+        <div class="prompt-content">请用HTML+CSS+JavaScript创建一个排序算法竞赛游戏，要求：
+1. 游戏界面：
+   - 顶部显示竞赛标题和当前轮次
+   - 中间显示待排序数组（柱状图形式）
+   - 底部显示操作日志和排名
+2. 游戏流程：
+   - 系统随机生成一个待排序数组
+   - 学生从下拉菜单选择排序算法（插入/选择/冒泡/快速/归并）
+   - 点击"开始排序"，算法以动画形式执行
+   - 排序完成后显示：比较次数、交换次数、执行时间
+   - 系统自动评分（基于效率）
+3. 多轮竞赛：
+   - 共5轮，每轮数据规模和类型不同
+   - 实时排行榜显示各轮得分
+   - 最终生成竞赛报告
+4. AI教练提示：
+   - 在排序过程中，AI根据当前数据特征给出优化建议
+   - 如"当前数据接近有序，插入排序是最佳选择"
+5. 界面美观，有动画和音效提示
+请输出完整的HTML代码。</div>
+    </div>
+
+    <!-- 通用提示词 -->
+    <h2 class="section-title">通用提示词模板</h2>
+
+    <div class="prompt-box">
+        <h4>通用UI框架生成提示词</h4>
+        <p><strong>用途：</strong>生成虚拟仿真实验的基础UI框架</p>
+        <div class="prompt-content">请帮我创建一个教育类Web应用的HTML页面框架，要求：
+1. 整体风格：现代教育科技风格，主色调为蓝色系(#2980b9/#3498db)
+2. 页面结构：
+   - 顶部导航栏（Logo + 导航链接）
+   - 左侧功能面板（操作按钮、参数设置）
+   - 中间主展示区（可视化画布/代码编辑器）
+   - 右侧信息面板（状态信息、统计指标）
+   - 底部状态栏
+3. 响应式设计，适配不同屏幕尺寸
+4. 使用CSS Grid或Flexbox布局
+5. 包含暗色/亮色主题切换功能
+6. 所有交互元素有悬停和点击反馈效果
+7. 代码使用原生JavaScript，不依赖外部框架
+请输出完整的HTML代码，包含CSS和JavaScript。</div>
+    </div>
+
+    <div class="prompt-box">
+        <h4>AI问答机器人提示词</h4>
+        <p><strong>用途：</strong>生成数据结构知识问答界面</p>
+        <div class="prompt-content">请帮我创建一个数据结构知识问答聊天界面（HTML+CSS+JavaScript），要求：
+1. 聊天界面设计：
+   - 左侧显示对话历史（用户消息右对齐蓝色气泡，AI回复左对齐白色气泡）
+   - 底部输入框和发送按钮
+   - 自动滚动到最新消息
+2. 预设知识库（JavaScript数组存储）：
+   - 链表相关：节点结构、头指针vs头结点、插入删除复杂度等
+   - 栈相关：栈的特性、应用场景、栈满条件等
+   - 队列相关：队头队尾、循环队列等
+   - 二叉树相关：遍历方法、满二叉树vs完全二叉树等
+   - 图相关：存储结构、遍历方法、最短路径等
+   - 排序相关：各排序算法复杂度、稳定性等
+3. 用户输入问题后：
+   - 显示"AI思考中..."动画
+   - 1秒后从知识库中匹配最相关问题并回复
+   - 匹配不到时回复"抱歉，我还在学习中，这个问题我暂时无法回答"
+4. 提供快捷问题按钮（常见问题一键发送）
+5. 界面美观，支持Markdown格式渲染
+请输出完整的HTML代码。</div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目 · AI提示词集合</p>
+</div>
+
+<script>
+// 复制提示词功能
+document.querySelectorAll('.prompt-content').forEach(function(box) {
+    var btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = '复制提示词';
+    btn.onclick = function() {
+        var text = box.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = '已复制!';
+            setTimeout(function() { btn.textContent = '复制提示词'; }, 2000);
+        });
+    };
+    box.parentElement.appendChild(btn);
+});
+</script>
+
+</body>
+</html>

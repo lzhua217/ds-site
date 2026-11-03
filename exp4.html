@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实验四：二叉树 —— AI+虚拟仿真实验</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif;background:#f0f4f8;color:#2c3e50;line-height:1.8}
+.header{background:linear-gradient(135deg,#1a5276 0%,#2e86c1 50%,#3498db 100%);color:#fff;padding:40px;text-align:center}
+.header h1{font-size:2em;margin-bottom:8px}
+.header p{opacity:0.9}
+.nav-bar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:12px 0}
+.nav-bar .container{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.nav-bar a{padding:7px 16px;background:#3498db;color:#fff;text-decoration:none;border-radius:20px;font-size:0.9em;transition:background 0.3s}
+.nav-bar a:hover{background:#2980b9}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.6em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:35px 0 20px}
+.sub-title{font-size:1.3em;color:#2c3e50;margin:25px 0 12px;padding-left:10px;border-left:3px solid #1abc9c}
+.info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.ai-box{background:#f0f8e8;border-left:4px solid #1abc9c;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.trad-box{background:#fef9e7;border-left:4px solid #f39c12;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.table{width:100%;border-collapse:collapse;margin:15px 0}
+.table th,.table td{padding:12px 15px;text-align:left;border-bottom:1px solid #ddd}
+.table th{background:#3498db;color:#fff}
+tr:hover{background:#f5f5f5}
+.footer{text-align:center;padding:25px;color:#7f8c8d;font-size:0.9em;margin-top:30px}
+ul{padding-left:20px}li{margin-bottom:6px}
+.viz-container{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);padding:25px;margin:20px 0}
+.viz-title{font-size:1.2em;color:#1a5276;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #eef2f7}
+.viz-controls{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
+.viz-btn{padding:8px 18px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.95em;transition:all 0.2s}
+.viz-btn:hover{background:#2980b9;transform:translateY(-1px)}
+.viz-btn.danger{background:#e74c3c}
+.viz-btn.danger:hover{background:#c0392b}
+.viz-btn.success{background:#27ae60}
+.viz-btn.success:hover{background:#1e8449}
+.viz-btn.warning{background:#f39c12}
+.viz-btn.warning:hover{background:#d68910}
+.viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.input-group{display:flex;gap:10px;margin:10px 0;align-items:center;flex-wrap:wrap}
+.input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
+.input-group label{font-weight:bold;color:#555}
+.step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
+.tab-bar{display:flex;gap:5px;margin-bottom:15px}
+.tab-btn{padding:8px 16px;background:#eef2f7;border:none;border-radius:6px 6px 0 0;cursor:pointer;font-size:0.95em;color:#555}
+.tab-btn.active{background:#3498db;color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
+.code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
+.code-keyword{color:#9b59b6}
+.code-type{color:#3498db}
+.code-comment{color:#7f8c8d;font-style:italic}
+.code-string{color:#27ae60}
+.code-number{color:#e67e22}
+.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
+.log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:#666;margin-right:8px}
+
+/* 二叉树可视化 */
+.tree-container{display:flex;justify-content:center;align-items:flex-start;padding:20px;overflow-x:auto;min-height:300px}
+.tree-node{display:inline-flex;flex-direction:column;align-items:center;margin:0 15px;position:relative}
+.tree-node-circle{width:40px;height:40px;border-radius:50%;background:#3498db;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1em;border:3px solid #3498db;transition:all 0.3s;z-index:2}
+.tree-node-circle.highlight{background:#f1c40f;border-color:#f39c12;box-shadow:0 0 15px rgba(241,196,15,0.5)}
+.tree-node-circle.visited{background:#27ae60;border-color:#27ae60}
+.tree-node-circle.stack-top{border-color:#e74c3c;box-shadow:0 0 10px rgba(231,76,60,0.5)}
+.tree-node-label{font-size:0.8em;color:#888;margin-top:5px}
+.tree-edges{position:absolute;top:40px;left:50%;width:2px;height:30px;background:#bdc3c7;transform:translateX(-50%)}
+.tree-edges.left{left:25%;transform:translateX(-50%) rotate(15deg);height:35px}
+.tree-edges.right{left:75%;transform:translateX(-50%) rotate(-15deg);height:35px}
+
+/* 栈可视化 */
+.traversal-stack{display:flex;gap:5px;align-items:center;flex-wrap:wrap;min-height:40px;padding:10px;background:#f8f9fa;border-radius:6px;margin:10px 0}
+.stack-element{background:#3498db;color:#fff;padding:5px 12px;border-radius:4px;font-weight:bold;font-size:0.9em}
+.stack-element.top{background:#e74c3c;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,0.4)}50%{box-shadow:0 0 0 10px rgba(231,76,60,0)}}
+.traversal-result{background:#eef2f7;padding:15px;border-radius:6px;margin:10px 0;font-family:Consolas,monospace;font-size:1.1em}
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+</head>
+<body>
+<div class="header"><h1>实验四：二叉树</h1><p>AI二叉树可视化与交互平台 · 虚拟仿真实验教学</p></div>
+<div class="nav-bar"><div class="container">
+<a href="index.html">首页</a><a href="exp1.html">实验一 单链表(一)</a><a href="exp2.html">实验二 单链表(二)</a>
+<a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">实验五 最短路径</a>
+<a href="exp6.html">实验六 内部排序</a><a href="prompts.html">AI提示词</a>
+</div></div>
+<div class="container">
+<h2 class="section-title">一、实验基本信息</h2>
+<table class="table"><tr><th>项目</th><th>内容</th></tr>
+<tr><td>实验名称</td><td>二叉树 —— AI二叉树可视化与交互平台</td></tr>
+<tr><td>课程名称</td><td>数据结构</td></tr><tr><td>专业方向</td><td>计算机科学与技术</td></tr>
+<tr><td>实验学时</td><td>3学时</td></tr><tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
+
+<h2 class="section-title">二、传统实验内容</h2>
+<div class="trad-box"><h3>原始实验要求</h3>
+<p><strong>实验目的：</strong>通过实践掌握二叉树的存储结构和遍历思想；掌握二叉树的常见算法的程序实现。</p>
+<p><strong>实验内容：</strong></p>
+<ol style="padding-left:20px;margin-top:10px"><li>输入字符序列，建立二叉链表</li><li>利用栈，编写非递归算法，编程实现二叉树的中序遍历</li><li>求二叉树的叶子结点个数</li><li>在主函数中设计一个简单的菜单，分别调试上述算法</li></ol>
+<p style="margin-top:10px"><strong>选做题/思考题：</strong></p>
+<ol style="padding-left:20px;margin-top:5px"><li>如何实现二叉树的后序遍历（非递归）</li><li>如何求二叉树的高度</li></ol></div>
+
+<h2 class="section-title">三、AI+增强实验设计</h2>
+<div class="ai-box"><h3>人工智能融合方案</h3>
+<p>二叉树是数据结构中最具可视化潜力的结构之一。通过AI驱动的交互式可视化平台，将抽象的树形结构和遍历算法以直观的方式呈现，帮助学生建立空间思维。支持四种遍历方式的动画演示和栈状态实时追踪。</p></div>
+
+<h2 class="section-title">四、可视化实验操作台</h2>
+<div class="viz-container">
+<div class="viz-title">二叉树可视化与遍历交互平台</div>
+<div class="tab-bar">
+<button class="tab-btn active" onclick="switchTab('build')">建树与遍历</button>
+<button class="tab-btn" onclick="switchTab('nonrec')">非递归遍历(栈)</button>
+<button class="tab-btn" onclick="switchTab('stats')">统计属性</button>
+</div>
+
+<!-- Tab 1: 建树与遍历 -->
+<div id="tab-build" class="tab-content active">
+<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>请输入先序序列构建二叉树</div>
+<div class="input-group">
+<label>先序序列(#表示空):</label>
+<input type="text" id="treeInput" value="ABD##E##CF##G" style="width:250px">
+<button class="viz-btn success" onclick="buildTree()">构建二叉树</button>
+<button class="viz-btn" onclick="preOrder()">先序遍历</button>
+<button class="viz-btn warning" onclick="inOrder()">中序遍历</button>
+<button class="viz-btn" onclick="postOrder()">后序遍历</button>
+<button class="viz-btn" onclick="levelOrder()">层序遍历</button>
+<button class="viz-btn danger" onclick="clearTree()">清空</button>
+</div>
+<div id="treeResult" class="traversal-result" style="display:none"></div>
+<div class="tree-container" id="treeView">
+<div style="color:#95a5a6">请先构建二叉树</div>
+</div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 二叉树建立与遍历代码</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 二叉链表定义
+typedef struct BiTNode {
+    char data;
+    struct BiTNode *lchild, *rchild;
+} BiTNode, *BiTree;
+
+// 先序创建二叉树 (#表示空树)
+void CreateBiTree(BiTree *T) {
+    char ch;
+    scanf("%c", &ch);
+    if(ch == ''#'') *T = NULL;
+    else {
+        *T = (BiTNode*)malloc(sizeof(BiTNode));
+        (*T)->data = ch;
+        CreateBiTree(&(*T)->lchild);
+        CreateBiTree(&(*T)->rchild);
+    }
+}
+
+// 中序遍历(递归)
+void InOrderTraverse(BiTree T) {
+    if(T) {
+        InOrderTraverse(T->lchild);
+        printf("%c ", T->data);
+        InOrderTraverse(T->rchild);
+    }
+}</textarea>
+</div>
+</div>
+
+<!-- Tab 2: 非递归遍历 -->
+<div id="tab-nonrec" class="tab-content">
+<div class="step-indicator" id="stepInfo2"><strong>当前状态：</strong>请先构建二叉树</div>
+<div class="input-group">
+<label>先序序列(#表示空):</label>
+<input type="text" id="treeInput2" value="ABD##E##CF##G" style="width:250px">
+<button class="viz-btn success" onclick="buildTree2()">构建二叉树</button>
+<button class="viz-btn warning" onclick="inOrderNonRec()">非递归中序遍历</button>
+</div>
+<div style="margin:15px 0"><strong>栈状态:</strong></div>
+<div class="traversal-stack" id="stackView"><span style="color:#95a5a6">栈为空</span></div>
+<div style="margin:15px 0"><strong>遍历结果:</strong></div>
+<div id="traversalResult" class="traversal-result" style="display:none"></div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 非递归中序遍历(栈实现)</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 利用栈实现非递归中序遍历
+void InOrderNonRec(BiTree T) {
+    InitStack(&S);
+    BiTree p = T;
+    while(p || !StackEmpty(S)) {
+        if(p) {
+            Push(&S, p);          // 当前结点入栈
+            p = p->lchild;        // 遍历左子树
+        } else {
+            Pop(&S, &p);         // 栈顶结点出栈
+            visit(p->data);       // 访问结点
+            p = p->rchild;        // 遍历右子树
+        }
+    }
+}</textarea>
+</div>
+</div>
+
+<!-- Tab 3: 统计属性 -->
+<div id="tab-stats" class="tab-content">
+<div class="step-indicator" id="stepInfo3"><strong>当前状态：</strong>请先构建二叉树</div>
+<div class="input-group">
+<label>先序序列(#表示空):</label>
+<input type="text" id="treeInput3" value="ABD##E##CF##G" style="width:250px">
+<button class="viz-btn success" onclick="buildTree3()">构建二叉树</button>
+<button class="viz-btn" onclick="countLeaves()">统计叶子结点</button>
+<button class="viz-btn warning" onclick="countDepth()">统计树高度</button>
+</div>
+<div id="statsResult" class="traversal-result" style="display:none"></div>
+</div>
+
+<div class="log-container" id="logArea"><div class="log-entry"><span class="log-time">[系统]</span> 二叉树虚拟仿真环境已就绪，请选择操作标签页</div></div>
+</div>
+
+<h2 class="section-title">五、实验报告要求</h2>
+<div class="info-box"><p>1. 实验题目与实验目的</p><p>2. 实验环境</p><p>3. 实验内容与完成情况（附上源程序及AI对比分析报告）</p><p>4. 出现的问题及AI辅助解决方案</p><p>5. 实验思考：递归与迭代在二叉树遍历中的比较与选择</p></div>
+</div>
+<div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
+
+<script>
+// 二叉树数据结构
+let tree = null;
+function TreeNode(data) { this.data=data; this.lchild=null; this.rchild=null; }
+
+function createTreeFromStr(str) {
+    let i = 0;
+    function build() {
+        if(i>=str.length||str[i]==='#'){i++; return null;}
+        let node = new TreeNode(str[i]); i++;
+        node.lchild = build();
+        node.rchild = build();
+        return node;
+    }
+    return build();
+}
+
+// 渲染二叉树 (简化版 - 使用缩进显示)
+function renderTree(node, container, prefix) {
+    prefix = prefix || '';
+    if(!node) { container.innerHTML = '<div style="color:#95a5a6">空树，请先构建</div>'; return; }
+    
+    let html = '<div style="text-align:center">';
+    html += '<div style="display:inline-block"><div class="tree-node-circle">' + node.data + '</div></div>';
+    html += '<div style="margin-top:10px;font-size:0.9em;color:#888">根结点</div>';
+    
+    // 子树
+    if(node.lchild || node.rchild) {
+        html += '<div style="display:flex;justify-content:center;margin-top:20px;gap:40px">';
+        if(node.lchild) {
+            html += '<div style="text-align:center"><div style="color:#3498db;font-size:1.5em">/</div>';
+            html += renderSubTree(node.lchild, prefix+'L');
+            html += '</div>';
+        } else {
+            html += '<div style="width:80px;text-align:center;color:#bbb">空</div>';
+        }
+        if(node.rchild) {
+            html += '<div style="text-align:center"><div style="color:#3498db;font-size:1.5em">\\</div>';
+            html += renderSubTree(node.rchild, prefix+'R');
+            html += '</div>';
+        } else {
+            html += '<div style="width:80px;text-align:center;color:#bbb">空</div>';
+        }
+        html += '</div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function renderSubTree(node, prefix) {
+    if(!node) return '<div style="color:#bbb;padding:10px">空</div>';
+    let html = '<div style="display:inline-flex;flex-direction:column;align-items:center">';
+    html += '<div class="tree-node-circle" style="width:35px;height:35px;font-size:1em">' + node.data + '</div>';
+    if(node.lchild || node.rchild) {
+        html += '<div style="display:flex;gap:20px;margin-top:10px">';
+        if(node.lchild) html += '<div style="text-align:center"><div style="color:#3498db">/</div>' + renderSubTree(node.lchild, prefix+'L') + '</div>';
+        else html += '<div style="width:40px;color:#bbb">空</div>';
+        if(node.rchild) html += '<div style="text-align:center"><div style="color:#3498db">\\</div>' + renderSubTree(node.rchild, prefix+'R') + '</div>';
+        else html += '<div style="width:40px;color:#bbb">空</div>';
+        html += '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function addLog(msg) {
+    const logArea = document.getElementById('logArea');
+    const time = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + msg;
+    logArea.appendChild(entry);
+    logArea.scrollTop = logArea.scrollHeight;
+}
+
+function buildTree() {
+    const str = document.getElementById('treeInput').value;
+    tree = createTreeFromStr(str);
+    renderTree(tree, document.getElementById('treeView'));
+    document.getElementById('treeResult').style.display = 'none';
+    updateStep('stepInfo', '二叉树已构建完成');
+    addLog('【操作】CreateBiTree() 根据先序序列 "' + str + '" 构建二叉树');
+    addLog('【结果】二叉树构建成功');
+}
+function buildTree2() {
+    const str = document.getElementById('treeInput2').value;
+    tree = createTreeFromStr(str);
+    document.getElementById('stackView').innerHTML = '<span style="color:#95a5a6">栈为空</span>';
+    document.getElementById('traversalResult').style.display = 'none';
+    addLog('【操作】构建二叉树: ' + str);
+    updateStep('stepInfo2', '二叉树已构建: ' + str);
+}
+function buildTree3() {
+    const str = document.getElementById('treeInput3').value;
+    tree = createTreeFromStr(str);
+    document.getElementById('statsResult').style.display = 'none';
+    addLog('【操作】构建二叉树: ' + str);
+    updateStep('stepInfo3', '二叉树已构建: ' + str);
+}
+
+function preOrder() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    let result = [];
+    function visit(node) {
+        if(node) { result.push(node.data); visit(node.lchild); visit(node.rchild); }
+    }
+    visit(tree);
+    document.getElementById('treeResult').style.display = 'block';
+    document.getElementById('treeResult').innerHTML = '<strong>先序遍历:</strong> ' + result.join(' → ');
+    updateStep('stepInfo', '先序遍历结果: ' + result.join(' '));
+    addLog('【操作】先序遍历: 根→左→右');
+    addLog('【结果】' + result.join(' '));
+}
+function inOrder() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    let result = [];
+    function visit(node) {
+        if(node) { visit(node.lchild); result.push(node.data); visit(node.rchild); }
+    }
+    visit(tree);
+    document.getElementById('treeResult').style.display = 'block';
+    document.getElementById('treeResult').innerHTML = '<strong>中序遍历:</strong> ' + result.join(' → ');
+    updateStep('stepInfo', '中序遍历结果: ' + result.join(' '));
+    addLog('【操作】中序遍历: 左→根→右');
+    addLog('【结果】' + result.join(' '));
+}
+function postOrder() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    let result = [];
+    function visit(node) {
+        if(node) { visit(node.lchild); visit(node.rchild); result.push(node.data); }
+    }
+    visit(tree);
+    document.getElementById('treeResult').style.display = 'block';
+    document.getElementById('treeResult').innerHTML = '<strong>后序遍历:</strong> ' + result.join(' → ');
+    updateStep('stepInfo', '后序遍历结果: ' + result.join(' '));
+    addLog('【操作】后序遍历: 左→右→根');
+    addLog('【结果】' + result.join(' '));
+}
+function levelOrder() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    let result = [], queue = [tree];
+    while(queue.length > 0) {
+        let node = queue.shift();
+        result.push(node.data);
+        if(node.lchild) queue.push(node.lchild);
+        if(node.rchild) queue.push(node.rchild);
+    }
+    document.getElementById('treeResult').style.display = 'block';
+    document.getElementById('treeResult').innerHTML = '<strong>层序遍历:</strong> ' + result.join(' → ');
+    updateStep('stepInfo', '层序遍历结果: ' + result.join(' '));
+    addLog('【操作】层序遍历: 按层从左到右');
+    addLog('【结果】' + result.join(' '));
+}
+
+// 非递归中序遍历
+function inOrderNonRec() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    let stack = [], p = tree, result = [], steps = [];
+    
+    // 模拟执行
+    let log = [];
+    while(p || stack.length > 0) {
+        if(p) {
+            stack.push(p);
+            log.push('结点' + p.data + '入栈, 转向左子树');
+            p = p.lchild;
+        } else {
+            let node = stack.pop();
+            result.push(node.data);
+            log.push('结点' + node.data + '出栈并访问, 转向右子树');
+            p = node.rchild;
+        }
+    }
+    
+    document.getElementById('stackView').innerHTML = '<span style="color:#27ae60">栈已空</span>';
+    document.getElementById('traversalResult').style.display = 'block';
+    document.getElementById('traversalResult').innerHTML = 
+        '<strong>非递归中序遍历结果:</strong> ' + result.join(' → ') + 
+        '<br><strong>执行步骤:</strong><br>' + log.join('<br>');
+    updateStep('stepInfo2', '非递归中序遍历完成: ' + result.join(' '));
+    addLog('【操作】非递归中序遍历(栈实现)');
+    addLog('【结果】' + result.join(' '));
+}
+
+// 统计
+function countLeaves() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    let count = 0;
+    function visit(node) {
+        if(node) {
+            if(!node.lchild && !node.rchild) count++;
+            visit(node.lchild); visit(node.rchild);
+        }
+    }
+    visit(tree);
+    document.getElementById('statsResult').style.display = 'block';
+    document.getElementById('statsResult').innerHTML = '<strong>叶子结点个数:</strong> ' + count;
+    addLog('【操作】求叶子结点个数');
+    addLog('【结果】叶子结点个数 = ' + count);
+}
+function countDepth() {
+    if(!tree) { addLog('【错误】请先构建二叉树'); return; }
+    function depth(node) {
+        if(!node) return 0;
+        return 1 + Math.max(depth(node.lchild), depth(node.rchild));
+    }
+    let d = depth(tree);
+    document.getElementById('statsResult').style.display = 'block';
+    document.getElementById('statsResult').innerHTML = '<strong>二叉树高度:</strong> ' + d;
+    addLog('【操作】求二叉树高度');
+    addLog('【结果】二叉树高度 = ' + d);
+}
+
+function updateStep(id, msg) { document.getElementById(id).innerHTML = '<strong>当前状态：</strong>' + msg; }
+function clearTree() { tree=null; document.getElementById('treeView').innerHTML='<div style="color:#95a5a6">请先构建二叉树</div>'; document.getElementById('treeResult').style.display='none'; addLog('【操作】清空二叉树'); }
+
+addLog('系统就绪。请选择操作标签页（建树与遍历/非递归遍历/统计属性）');
+</script>
+</body>
+</html>

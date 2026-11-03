@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实验三：栈 —— AI+虚拟仿真实验</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-serif;background:#f0f4f8;color:#2c3e50;line-height:1.8}
+.header{background:linear-gradient(135deg,#1a5276 0%,#2e86c1 50%,#3498db 100%);color:#fff;padding:40px;text-align:center}
+.header h1{font-size:2em;margin-bottom:8px}
+.header p{opacity:0.9}
+.nav-bar{background:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.1);padding:12px 0}
+.nav-bar .container{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.nav-bar a{padding:7px 16px;background:#3498db;color:#fff;text-decoration:none;border-radius:20px;font-size:0.9em;transition:background 0.3s}
+.nav-bar a:hover{background:#2980b9}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-title{font-size:1.6em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:35px 0 20px}
+.sub-title{font-size:1.3em;color:#2c3e50;margin:25px 0 12px;padding-left:10px;border-left:3px solid #1abc9c}
+.info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.ai-box{background:#f0f8e8;border-left:4px solid #1abc9c;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.trad-box{background:#fef9e7;border-left:4px solid #f39c12;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
+.table{width:100%;border-collapse:collapse;margin:15px 0}
+.table th,.table td{padding:12px 15px;text-align:left;border-bottom:1px solid #ddd}
+.table th{background:#3498db;color:#fff}
+tr:hover{background:#f5f5f5}
+.footer{text-align:center;padding:25px;color:#7f8c8d;font-size:0.9em;margin-top:30px}
+ul{padding-left:20px}li{margin-bottom:6px}
+.viz-container{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);padding:25px;margin:20px 0}
+.viz-title{font-size:1.2em;color:#1a5276;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #eef2f7}
+.viz-controls{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
+.viz-btn{padding:8px 18px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.95em;transition:all 0.2s}
+.viz-btn:hover{background:#2980b9;transform:translateY(-1px)}
+.viz-btn.danger{background:#e74c3c}
+.viz-btn.danger:hover{background:#c0392b}
+.viz-btn.success{background:#27ae60}
+.viz-btn.success:hover{background:#1e8449}
+.viz-btn.warning{background:#f39c12}
+.viz-btn.warning:hover{background:#d68910}
+.viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.input-group{display:flex;gap:10px;margin:10px 0;align-items:center;flex-wrap:wrap}
+.input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
+.input-group label{font-weight:bold;color:#555}
+.step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
+
+/* 栈可视化 */
+.stack-container{display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap;padding:20px}
+.stack-wrapper{text-align:center}
+.stack-label{font-weight:bold;color:#1a5276;margin-bottom:10px;font-size:1.1em}
+.stack-box{width:120px;min-height:300px;border:3px solid #3498db;border-radius:8px 8px 0 0;position:relative;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden;background:#f8f9fa}
+.stack-bottom{position:absolute;bottom:0;left:0;right:0;height:3px;background:#3498db}
+.stack-item{width:100%;padding:10px;background:#3498db;color:#fff;text-align:center;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.2);animation:slideIn 0.3s ease;box-sizing:border-box}
+.stack-item.pop-animation{background:#e74c3c;animation:slideOut 0.3s ease forwards}
+@keyframes slideIn{from{transform:translateY(-50px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes slideOut{from{transform:translateY(0);opacity:1}to{transform:translateY(-50px);opacity:0}}
+.stack-top-arrow{color:#e74c3c;font-weight:bold;font-size:1.2em;animation:bounce 1s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.stack-pointer{position:absolute;right:-30px;top:0;color:#e74c3c;font-weight:bold}
+
+/* 两栈共享 */
+.shared-stack{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;padding:20px}
+.shared-box{width:150px;min-height:250px;border:3px solid #3498db;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden;background:#f8f9fa}
+.shared-item{width:100%;padding:8px;background:#3498db;color:#fff;text-align:center;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.2);box-sizing:border-box}
+.shared-item.left{background:#2e86c1}
+.shared-item.right{background:#e67e22}
+.shared-divider{width:3px;height:100%;background:#f39c12;display:inline-block}
+.shared-label{font-weight:bold;text-align:center;margin-bottom:5px}
+
+.code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
+.code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
+.code-keyword{color:#9b59b6}
+.code-type{color:#3498db}
+.code-comment{color:#7f8c8d;font-style:italic}
+.code-string{color:#27ae60}
+.code-number{color:#e67e22}
+.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
+.log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:#666;margin-right:8px}
+.tab-bar{display:flex;gap:5px;margin-bottom:15px}
+.tab-btn{padding:8px 16px;background:#eef2f7;border:none;border-radius:6px 6px 0 0;cursor:pointer;font-size:0.95em;color:#555}
+.tab-btn.active{background:#3498db;color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+</head>
+<body>
+<div class="header"><h1>实验三：栈</h1><p>AI栈应用仿真平台 · 虚拟仿真实验教学</p></div>
+<div class="nav-bar"><div class="container">
+<a href="index.html">首页</a><a href="exp1.html">实验一 单链表(一)</a><a href="exp2.html">实验二 单链表(二)</a>
+<a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">实验五 最短路径</a>
+<a href="exp6.html">实验六 内部排序</a><a href="prompts.html">AI提示词</a>
+</div></div>
+<div class="container">
+<h2 class="section-title">一、实验基本信息</h2>
+<table class="table"><tr><th>项目</th><th>内容</th></tr>
+<tr><td>实验名称</td><td>栈 —— AI栈应用仿真平台</td></tr>
+<tr><td>课程名称</td><td>数据结构</td></tr><tr><td>专业方向</td><td>计算机科学与技术</td></tr>
+<tr><td>实验学时</td><td>2学时</td></tr><tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
+
+<h2 class="section-title">二、传统实验内容</h2>
+<div class="trad-box"><h3>原始实验要求</h3>
+<p><strong>实验目的：</strong>深入了解并掌握栈的特性及其在实际中的应用；熟练掌握栈的算法实现；运用栈操作求解实际问题。</p>
+<p><strong>实验内容：</strong>利用栈实现数据的分类，要求当输入为偶数时进栈1，当输入为奇数时进栈2，最后分别从栈1和栈2输出偶数和奇数序列。</p>
+<p style="margin-top:10px"><strong>实现提示：</strong></p>
+<ol style="padding-left:20px;margin-top:5px"><li>开辟一个连续的存储空间，实现两个栈顺序存储空间的共享；分别在两端设置栈顶指针，并按要求实现栈操作。</li><li>采用顺序存储实现栈的初始化、入栈、出栈操作。</li></ol>
+<p style="margin-top:10px"><strong>选做题/思考题：</strong></p>
+<ol style="padding-left:20px;margin-top:5px"><li>两栈空间共享时，栈满的条件是什么？</li><li>为停车场编制进行管理的模拟程序</li><li>编写程序，利用栈实现表达式求值</li></ol></div>
+
+<h2 class="section-title">三、AI+增强实验设计</h2>
+<div class="ai-box"><h3>人工智能融合方案</h3>
+<p>针对栈的抽象特性和应用场景，引入AI可视化模拟、智能分步解析、场景化仿真等技术，将栈的"后进先出"特性以直观方式呈现。通过栈操作可视化模拟器，将抽象的栈顶指针移动转化为直观的动画。</p></div>
+
+<h2 class="section-title">四、可视化实验操作台</h2>
+<div class="viz-container">
+<div class="viz-title">栈操作可视化模拟器</div>
+<div class="tab-bar">
+<button class="tab-btn active" onclick="switchTab('basic')">基础栈操作</button>
+<button class="tab-btn" onclick="switchTab('classify')">奇偶分类(双栈)</button>
+<button class="tab-btn" onclick="switchTab('expr')">表达式求值</button>
+</div>
+
+<!-- Tab 1: 基础栈操作 -->
+<div id="tab-basic" class="tab-content active">
+<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>栈为空栈</div>
+<div class="input-group">
+<label>入栈元素:</label>
+<input type="text" id="pushVal" value="10" style="width:100px">
+<button class="viz-btn success" onclick="pushStack()">入栈(Push)</button>
+<button class="viz-btn danger" onclick="popStack()">出栈(Pop)</button>
+<button class="viz-btn" onclick="peekStack()">取栈顶</button>
+<button class="viz-btn" onclick="clearStack()" style="background:#95a5a6">清空</button>
+</div>
+<div class="input-group">
+<label>快速测试:</label>
+<button class="viz-btn" onclick="quickPush()">依次入栈 1,2,3,4,5</button>
+<button class="viz-btn warning" onclick="quickPopAll()">依次出栈全部</button>
+</div>
+<div style="text-align:center;margin:20px 0">
+<div class="stack-wrapper">
+<div class="stack-label">栈 Stack</div>
+<div class="stack-box" id="stackView"><div class="stack-bottom"></div></div>
+<div class="stack-top-arrow" id="topArrow">↑ TOP</div>
+</div>
+</div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 栈的基本操作代码</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 顺序栈定义
+typedef struct {
+    int data[100];
+    int top;
+} SeqStack;
+
+// 初始化栈
+void InitStack(SeqStack *S) {
+    S->top = -1;
+}
+
+// 入栈
+int Push(SeqStack *S, int x) {
+    if(S->top == 99) return 0; // 栈满
+    S->top++;
+    S->data[S->top] = x;
+    return 1;
+}
+
+// 出栈
+int Pop(SeqStack *S, int *x) {
+    if(S->top == -1) return 0; // 栈空
+    *x = S->data[S->top];
+    S->top--;
+    return 1;
+}</textarea>
+</div>
+</div>
+
+<!-- Tab 2: 奇偶分类 -->
+<div id="tab-classify" class="tab-content">
+<div class="step-indicator" id="stepInfo2"><strong>当前状态：</strong>请输入数据序列</div>
+<div class="input-group">
+<label>输入数据(逗号分隔):</label>
+<input type="text" id="classifyData" value="12,7,8,5,4,3,10,9,6,11" style="width:300px">
+<button class="viz-btn success" onclick="classifyData()">执行分类</button>
+<button class="viz-btn" onclick="stepClassify()" style="background:#9b59b6">逐步分类</button>
+</div>
+<div class="input-group">
+<label>逐个输入:</label>
+<input type="number" id="singleInput" value="12" style="width:100px">
+<button class="viz-btn" onclick="addClassify()">入栈分类</button>
+<button class="viz-btn" onclick="resetClassify()" style="background:#95a5a6">重置</button>
+</div>
+<div class="shared-stack">
+<div>
+<div class="shared-label" style="color:#2e86c1">栈1(偶数)</div>
+<div class="shared-box" id="stackEven"><div class="stack-bottom"></div></div>
+</div>
+<div>
+<div class="shared-label" style="color:#e67e22">栈2(奇数)</div>
+<div class="shared-box" id="stackOdd"><div class="stack-bottom"></div></div>
+</div>
+</div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 两栈共享 - 奇偶分类代码</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 两栈共享结构
+typedef struct {
+    int data[100];
+    int top1;  // 栈1栈顶
+    int top2;  // 栈2栈顶
+} DoubleStack;
+
+// 初始化
+void InitDoubleStack(DoubleStack *S) {
+    S->top1 = -1;
+    S->top2 = 100;
+}
+
+// 分类入栈
+void Classify(DoubleStack *S, int x) {
+    if(x % 2 == 0)
+        Push1(S, x);  // 偶数进栈1
+    else
+        Push2(S, x);  // 奇数进栈2
+}
+
+// 栈满条件: top1 + 1 == top2</textarea>
+</div>
+</div>
+
+<!-- Tab 3: 表达式求值 -->
+<div id="tab-expr" class="tab-content">
+<div class="step-indicator" id="stepInfo3"><strong>当前状态：</strong>请输入中缀表达式</div>
+<div class="input-group">
+<label>中缀表达式:</label>
+<input type="text" id="exprInput" value="3+5*2" style="width:200px">
+<button class="viz-btn success" onclick="evalExpr()">表达式求值</button>
+</div>
+<div id="exprResult" style="margin:15px 0;padding:15px;background:#f8f9fa;border-radius:6px"></div>
+<div class="code-container">
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 栈实现表达式求值核心代码</div>
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 利用栈实现表达式求值
+int EvaluateExpression(char *expr) {
+    InitStack(&OPTR); // 操作符栈
+    InitStack(&OPND); // 操作数栈
+    Push(&OPTR, '#');
+    int i = 0;
+    while(expr[i] != ''@'' || GetTop(OPTR) != ''#'') {
+        if(!IsOperator(expr[i])) {
+            Push(&OPND, expr[i]-'0'); i++;
+        } else {
+            char theta = Precede(GetTop(OPTR), expr[i]);
+            if(theta == ''<'') { Push(&OPTR, expr[i]); i++; }
+            else if(theta == ''>'') {
+                Pop(&OPTR, &theta);
+                Pop(&OPND, &b); Pop(&OPND, &a);
+                Push(&OPND, Operate(a, theta, b));
+            }
+        }
+    }
+    return GetTop(OPND);
+}</textarea>
+</div>
+</div>
+
+<div class="log-container" id="logArea"><div class="log-entry"><span class="log-time">[系统]</span> 栈虚拟仿真环境已就绪，请选择操作标签页</div></div>
+</div>
+
+<h2 class="section-title">五、实验报告要求</h2>
+<div class="info-box"><p>1. 实验题目与实验目的</p><p>2. 实验环境</p><p>3. 实验内容与完成情况（附上源程序及AI辅助分析结果）</p><p>4. 出现的问题及AI辅助解决方案</p><p>5. 实验思考：栈在实际编程中的应用场景总结</p></div>
+</div>
+<div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
+
+<script>
+function addLog(msg) {
+    const logArea = document.getElementById('logArea');
+    const time = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + msg;
+    logArea.appendChild(entry);
+    logArea.scrollTop = logArea.scrollHeight;
+}
+function updateStep(id, msg) { document.getElementById(id).innerHTML = '<strong>当前状态：</strong>' + msg; }
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// 基础栈
+let stack = [];
+function renderStack() {
+    const view = document.getElementById('stackView');
+    let html = '';
+    for(let i=stack.length-1; i>=0; i--) {
+        html += '<div class="stack-item">' + stack[i] + '</div>';
+    }
+    html += '<div class="stack-bottom"></div>';
+    view.innerHTML = html;
+    document.getElementById('topArrow').style.display = stack.length > 0 ? 'block' : 'none';
+    updateStep('stepInfo', '栈顶元素: ' + (stack.length>0?stack[stack.length-1]:'空') + '  栈长度: ' + stack.length);
+}
+function pushStack() {
+    const val = document.getElementById('pushVal').value.trim();
+    if(val === '') { addLog('【错误】请输入入栈元素'); return; }
+    if(stack.length >= 100) { addLog('【错误】栈已满!'); return; }
+    stack.push(val);
+    renderStack();
+    addLog('【操作】Push(&amp;S, ' + val + ') → 元素' + val + '入栈，top指针上移');
+    addLog('【结果】栈长度: ' + stack.length + '，栈顶元素: ' + val);
+}
+function popStack() {
+    if(stack.length === 0) { addLog('【错误】栈为空，无法出栈!'); return; }
+    const val = stack.pop();
+    renderStack();
+    updateStep('stepInfo', '出栈元素: ' + val);
+    addLog('【操作】Pop(&amp;S, &amp;x) → 元素' + val + '出栈，top指针下移');
+    addLog('【结果】出栈元素: ' + val + '，当前栈长度: ' + stack.length);
+}
+function peekStack() {
+    if(stack.length === 0) { addLog('【错误】栈为空!'); return; }
+    addLog('【操作】GetTop(S) → 栈顶元素: ' + stack[stack.length-1]);
+    updateStep('stepInfo', '栈顶元素: ' + stack[stack.length-1]);
+}
+function clearStack() { stack=[]; renderStack(); addLog('【操作】清空栈'); }
+function quickPush() {
+    clearStack();
+    const vals = [1,2,3,4,5];
+    let i=0;
+    const interval = setInterval(function() {
+        if(i>=vals.length){clearInterval(interval);addLog('【完成】快速入栈完成');return;}
+        document.getElementById('pushVal').value = vals[i];
+        pushStack();
+        i++;
+    }, 400);
+}
+function quickPopAll() {
+    if(stack.length===0) { addLog('【错误】栈为空'); return; }
+    const interval = setInterval(function() {
+        if(stack.length===0){clearInterval(interval);addLog('【完成】栈已空');return;}
+        popStack();
+    }, 500);
+}
+
+// 奇偶分类
+let evenStack=[], oddStack=[];
+function renderClassify() {
+    const evenView = document.getElementById('stackEven');
+    const oddView = document.getElementById('stackOdd');
+    let eHtml = '';
+    for(let i=evenStack.length-1; i>=0; i--) eHtml += '<div class="shared-item left">'+evenStack[i]+'</div>';
+    eHtml += '<div class="stack-bottom"></div>';
+    evenView.innerHTML = eHtml;
+    
+    let oHtml = '';
+    for(let i=oddStack.length-1; i>=0; i--) oHtml += '<div class="shared-item right">'+oddStack[i]+'</div>';
+    oHtml += '<div class="stack-bottom"></div>';
+    oddView.innerHTML = oHtml;
+    
+    updateStep('stepInfo2', '偶数栈: ['+evenStack.join(',')+']  奇数栈: ['+oddStack.join(',')+']');
+}
+function addClassify() {
+    const val = parseInt(document.getElementById('singleInput').value);
+    if(isNaN(val)) { addLog('【错误】请输入有效数字'); return; }
+    if(val % 2 === 0) {
+        evenStack.push(val);
+        addLog('【操作】'+val+'是偶数 → 入栈1(偶数栈)');
+    } else {
+        oddStack.push(val);
+        addLog('【操作】'+val+'是奇数 → 入栈2(奇数栈)');
+    }
+    renderClassify();
+}
+function classifyData() {
+    const data = document.getElementById('classifyData').value.split(',').map(Number);
+    evenStack = []; oddStack = [];
+    data.forEach(function(v) {
+        if(v % 2 === 0) evenStack.push(v);
+        else oddStack.push(v);
+    });
+    renderClassify();
+    addLog('【操作】批量分类: 输入序列=['+data.join(',')+']');
+    addLog('【结果】偶数栈: ['+evenStack.join(',')+']  奇数栈: ['+oddStack.join(',')+']');
+}
+function stepClassify() {
+    const data = document.getElementById('classifyData').value.split(',').map(Number);
+    evenStack = []; oddStack = [];
+    let i = 0;
+    addLog('【操作】逐步分类开始...');
+    const interval = setInterval(function() {
+        if(i>=data.length){clearInterval(interval);addLog('【完成】分类完成');return;}
+        const v = data[i];
+        if(v%2===0) { evenStack.push(v); addLog('  '+v+'是偶数 → 入栈1'); }
+        else { oddStack.push(v); addLog('  '+v+'是奇数 → 入栈2'); }
+        renderClassify();
+        i++;
+    }, 600);
+}
+function resetClassify() { evenStack=[];oddStack=[];renderClassify(); addLog('【操作】重置双栈'); }
+
+// 表达式求值
+function evalExpr() {
+    const expr = document.getElementById('exprInput').value;
+    addLog('【操作】表达式求值: ' + expr);
+    
+    // 简单实现: 使用eval（仅用于演示）
+    try {
+        // 安全评估
+        const result = Function('"use strict";return (' + expr.replace(/[^0-9+\-*/().]/g,'') + ')')();
+        document.getElementById('exprResult').innerHTML = 
+            '<strong>表达式:</strong> ' + expr + '<br>' +
+            '<strong>计算结果:</strong> ' + result + '<br>' +
+            '<strong>运算过程:</strong> 操作数栈依次入栈 → 操作符栈比较优先级 → 执行运算 → 最终结果';
+        addLog('【结果】表达式 ' + expr + ' = ' + result);
+        addLog('【过程】1. 操作数入栈 → 2. 操作符比较优先级 → 3. 执行运算 → 4. 得到结果');
+    } catch(e) {
+        document.getElementById('exprResult').innerHTML = '<span style="color:red">表达式有误，请检查</span>';
+        addLog('【错误】表达式语法错误');
+    }
+}
+
+addLog('系统就绪。请选择操作标签页（基础栈操作/奇偶分类/表达式求值）');
+</script>
+</body>
+</html>
