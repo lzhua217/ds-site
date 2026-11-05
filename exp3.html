@@ -37,34 +37,45 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .viz-btn.success:hover{background:#1e8449}
 .viz-btn.warning{background:#f39c12}
 .viz-btn.warning:hover{background:#d68910}
+.viz-btn.purple{background:#9b59b6}
+.viz-btn.purple:hover{background:#8e44ad}
 .viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 .input-group{display:flex;gap:10px;margin:10px 0;align-items:center;flex-wrap:wrap}
 .input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
 .input-group label{font-weight:bold;color:#555}
 .step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
+.stack-full-warning{color:#e74c3c;font-weight:bold;margin-left:10px}
 
-/* 栈可视化 */
-.stack-container{display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap;padding:20px}
-.stack-wrapper{text-align:center}
+/* 基础栈样式：纵向 */
+.stack-wrapper{text-align:center;position:relative;margin:30px auto;width:180px;display:none}
+.stack-wrapper.show{display:block}
 .stack-label{font-weight:bold;color:#1a5276;margin-bottom:10px;font-size:1.1em}
-.stack-box{width:120px;min-height:300px;border:3px solid #3498db;border-radius:8px 8px 0 0;position:relative;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden;background:#f8f9fa}
-.stack-bottom{position:absolute;bottom:0;left:0;right:0;height:3px;background:#3498db}
-.stack-item{width:100%;padding:10px;background:#3498db;color:#fff;text-align:center;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.2);animation:slideIn 0.3s ease;box-sizing:border-box}
+.stack-box{width:80px;border:3px solid #3498db;border-radius:4px;position:relative;overflow:hidden;background:#fff;margin:0 auto}
+.stack-grid-cell{width:100%;height:40px;border-bottom:1px dashed #bdd7ee;box-sizing:border-box}
+.stack-grid-cell:last-child{border-bottom:none}
+.stack-item{width:100%;height:40px;line-height:40px;background:#3498db;color:#fff;text-align:center;font-weight:bold;box-sizing:border-box;animation:slideIn 0.3s ease;position:absolute;left:0}
 .stack-item.pop-animation{background:#e74c3c;animation:slideOut 0.3s ease forwards}
 @keyframes slideIn{from{transform:translateY(-50px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes slideOut{from{transform:translateY(0);opacity:1}to{transform:translateY(-50px);opacity:0}}
-.stack-top-arrow{color:#e74c3c;font-weight:bold;font-size:1.2em;animation:bounce 1s infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
-.stack-pointer{position:absolute;right:-30px;top:0;color:#e74c3c;font-weight:bold}
+.stack-top-pointer{position:absolute;left:-70px;color:#e74c3c;font-weight:bold;font-size:0.95em;white-space:nowrap;transition:top 0.3s ease;line-height:40px;height:40px}
+.stack-top-pointer::after{content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:8px solid #e74c3c}
+.stack-bottom{width:100%;height:3px;background:#2980b9;position:absolute;bottom:0;left:0}
 
-/* 两栈共享 */
-.shared-stack{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;padding:20px}
-.shared-box{width:150px;min-height:250px;border:3px solid #3498db;border-radius:8px;position:relative;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden;background:#f8f9fa}
-.shared-item{width:100%;padding:8px;background:#3498db;color:#fff;text-align:center;font-weight:bold;border-bottom:1px solid rgba(255,255,255,0.2);box-sizing:border-box}
-.shared-item.left{background:#2e86c1}
-.shared-item.right{background:#e67e22}
-.shared-divider{width:3px;height:100%;background:#f39c12;display:inline-block}
-.shared-label{font-weight:bold;text-align:center;margin-bottom:5px}
+/* 两栈共享样式：横向 */
+.shared-stack-wrapper{text-align:center;position:relative;margin:50px auto 30px;display:none}
+.shared-stack-wrapper.show{display:block}
+.shared-stack-label{font-weight:bold;color:#1a5276;margin-bottom:25px;font-size:1.1em}
+.shared-box{height:60px;border:3px solid #3498db;border-radius:4px;position:relative;overflow:hidden;background:#fff;margin:0 auto}
+.shared-grid-cell{height:100%;border-right:1px dashed #bdd7ee;box-sizing:border-box;float:left}
+.shared-grid-cell:last-child{border-right:none}
+.shared-item-even{height:100%;line-height:54px;background:#2e86c1;color:#fff;text-align:center;font-weight:bold;box-sizing:border-box;animation:slideInLeft 0.3s ease;position:absolute;top:0}
+.shared-item-odd{height:100%;line-height:54px;background:#e67e22;color:#fff;text-align:center;font-weight:bold;box-sizing:border-box;animation:slideInRight 0.3s ease;position:absolute;top:0}
+@keyframes slideInLeft{from{transform:translateX(-50px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideInRight{from{transform:translateX(50px);opacity:0}to{transform:translateX(0);opacity:1}}
+.shared-pointer-even{position:absolute;top:-35px;color:#2e86c1;font-weight:bold;font-size:0.9em;white-space:nowrap;transition:left 0.3s ease;line-height:30px;height:30px}
+.shared-pointer-even::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #2e86c1}
+.shared-pointer-odd{position:absolute;top:-35px;color:#e67e22;font-weight:bold;font-size:0.9em;white-space:nowrap;transition:left 0.3s ease;line-height:30px;height:30px}
+.shared-pointer-odd::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #e67e22}
 
 .code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
 .code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
@@ -82,21 +93,24 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .tab-btn.active{background:#3498db;color:#fff}
 .tab-content{display:none}
 .tab-content.active{display:block}
-.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}
+</style>
 </head>
 <body>
 <div class="header"><h1>实验三：栈</h1><p>AI栈应用仿真平台 · 虚拟仿真实验教学</p></div>
 <div class="nav-bar"><div class="container">
 <a href="index.html">首页</a><a href="exp1.html">实验一 单链表(一)</a><a href="exp2.html">实验二 单链表(二)</a>
-<a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">实验五 最短路径</a>
+<a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">最短路径</a>
 <a href="exp6.html">实验六 内部排序</a><a href="prompts.html">AI提示词</a>
 </div></div>
 <div class="container">
 <h2 class="section-title">一、实验基本信息</h2>
 <table class="table"><tr><th>项目</th><th>内容</th></tr>
 <tr><td>实验名称</td><td>栈 —— AI栈应用仿真平台</td></tr>
-<tr><td>课程名称</td><td>数据结构</td></tr><tr><td>专业方向</td><td>计算机科学与技术</td></tr>
-<tr><td>实验学时</td><td>2学时</td></tr><tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
+<tr><td>课程名称</td><td>数据结构</td></tr>
+<tr><td>专业方向</td><td>计算机科学与技术</td></tr>
+<tr><td>实验学时</td><td>2学时</td></tr>
+<tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
 
 <h2 class="section-title">二、传统实验内容</h2>
 <div class="trad-box"><h3>原始实验要求</h3>
@@ -109,120 +123,148 @@ ul{padding-left:20px}li{margin-bottom:6px}
 
 <h2 class="section-title">三、AI+增强实验设计</h2>
 <div class="ai-box"><h3>人工智能融合方案</h3>
-<p>针对栈的抽象特性和应用场景，引入AI可视化模拟、智能分步解析、场景化仿真等技术，将栈的"后进先出"特性以直观方式呈现。通过栈操作可视化模拟器，将抽象的栈顶指针移动转化为直观的动画。</p></div>
+<p>针对栈的抽象特性和应用场景，引入AI可视化模拟、智能分步解析、场景化仿真等技术，将栈的"后进先出"特性以直观方式呈现。通过栈操作可视化模拟器，将抽象的栈顶指针移动转化为直观的动画：栈底固定在容器底部，元素从下往上堆叠，新元素从栈顶（上方）插入，旧元素保持位置不变；两栈共享空间直观展示两端向中间增长的横向存储结构。</p></div>
 
 <h2 class="section-title">四、可视化实验操作台</h2>
 <div class="viz-container">
 <div class="viz-title">栈操作可视化模拟器</div>
 <div class="tab-bar">
 <button class="tab-btn active" onclick="switchTab('basic')">基础栈操作</button>
-<button class="tab-btn" onclick="switchTab('classify')">奇偶分类(双栈)</button>
+<button class="tab-btn" onclick="switchTab('classify')">奇偶分类(双栈共享)</button>
 <button class="tab-btn" onclick="switchTab('expr')">表达式求值</button>
 </div>
 
 <!-- Tab 1: 基础栈操作 -->
 <div id="tab-basic" class="tab-content active">
-<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>栈为空栈</div>
+<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>请先初始化栈（设置容量）</div>
+<div class="input-group">
+<label>栈容量:</label>
+<input type="number" id="stackCapacity" value="5" min="1" max="20" style="width:80px">
+<button class="viz-btn purple" onclick="initStack()">初始化栈</button>
+</div>
 <div class="input-group">
 <label>入栈元素:</label>
-<input type="text" id="pushVal" value="10" style="width:100px">
-<button class="viz-btn success" onclick="pushStack()">入栈(Push)</button>
-<button class="viz-btn danger" onclick="popStack()">出栈(Pop)</button>
-<button class="viz-btn" onclick="peekStack()">取栈顶</button>
-<button class="viz-btn" onclick="clearStack()" style="background:#95a5a6">清空</button>
+<input type="text" id="pushVal" value="10" style="width:100px" disabled>
+<button class="viz-btn success" onclick="pushStack()" disabled>入栈(Push)</button>
+<button class="viz-btn danger" onclick="popStack()" disabled>出栈(Pop)</button>
+<button class="viz-btn" onclick="peekStack()" disabled>取栈顶</button>
+<button class="viz-btn" onclick="clearStack()" style="background:#95a5a6" disabled>清空</button>
 </div>
 <div class="input-group">
 <label>快速测试:</label>
-<button class="viz-btn" onclick="quickPush()">依次入栈 1,2,3,4,5</button>
-<button class="viz-btn warning" onclick="quickPopAll()">依次出栈全部</button>
+<button class="viz-btn" onclick="quickPush()" disabled>依次入栈 1,2,3,4,5</button>
+<button class="viz-btn warning" onclick="quickPopAll()" disabled>依次出栈全部</button>
 </div>
-<div style="text-align:center;margin:20px 0">
-<div class="stack-wrapper">
-<div class="stack-label">栈 Stack</div>
-<div class="stack-box" id="stackView"><div class="stack-bottom"></div></div>
-<div class="stack-top-arrow" id="topArrow">↑ TOP</div>
+<div style="text-align:center;padding:20px 0">
+<div class="stack-wrapper" id="stackWrapper">
+<div class="stack-label">顺序栈 Stack</div>
+<div class="stack-box" id="stackView" style="height:246px">
+<div class="stack-bottom"></div>
+<div class="stack-top-pointer" id="topPointer">TOP →</div>
+</div>
+<div style="margin-top:8px;color:#7f8c8d;font-size:0.9em">栈底</div>
 </div>
 </div>
 <div class="code-container">
-<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 栈的基本操作代码</div>
-<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 顺序栈定义
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 顺序栈定义与基本操作</div>
+<textarea class="code-textarea" readonly>// 顺序栈定义
 typedef struct {
-    int data[100];
-    int top;
+    int *data;     // 动态数组存储元素
+    int top;       // 栈顶指针，指向待插入位置
+    int capacity;  // 栈容量
 } SeqStack;
 
-// 初始化栈
-void InitStack(SeqStack *S) {
-    S->top = -1;
+// 初始化栈：创建容量为cap的空栈
+int InitStack(SeqStack *S, int cap) {
+    S->data = (int*)malloc(cap * sizeof(int));
+    S->top = 0;       // 空栈top=0，指向第一个待插入位置
+    S->capacity = cap;
+    return 1;
 }
 
-// 入栈
+// 入栈：元素存入top位置，top再上移
 int Push(SeqStack *S, int x) {
-    if(S->top == 99) return 0; // 栈满
-    S->top++;
+    if(S->top == S->capacity) return 0; // 栈满：top超出最后一个位置
     S->data[S->top] = x;
+    S->top++;
     return 1;
 }
 
 // 出栈
 int Pop(SeqStack *S, int *x) {
-    if(S->top == -1) return 0; // 栈空
-    *x = S->data[S->top];
+    if(S->top == 0) return 0; // 栈空
     S->top--;
+    *x = S->data[S->top];
     return 1;
 }</textarea>
 </div>
 </div>
 
-<!-- Tab 2: 奇偶分类 -->
+<!-- Tab 2: 奇偶分类 两栈共享（横向） -->
 <div id="tab-classify" class="tab-content">
-<div class="step-indicator" id="stepInfo2"><strong>当前状态：</strong>请输入数据序列</div>
+<div class="step-indicator" id="stepInfo2"><strong>当前状态：</strong>共享存储空间，偶数从左端入栈向右增长，奇数从右端入栈向左增长</div>
 <div class="input-group">
-<label>输入数据(逗号分隔):</label>
-<input type="text" id="classifyData" value="12,7,8,5,4,3,10,9,6,11" style="width:300px">
-<button class="viz-btn success" onclick="classifyData()">执行分类</button>
-<button class="viz-btn" onclick="stepClassify()" style="background:#9b59b6">逐步分类</button>
+<label>共享空间总容量:</label>
+<input type="number" id="sharedCapacity" value="10" min="2" max="20" style="width:80px">
+<button class="viz-btn purple" onclick="initSharedStack()">初始化共享栈</button>
 </div>
 <div class="input-group">
 <label>逐个输入:</label>
-<input type="number" id="singleInput" value="12" style="width:100px">
-<button class="viz-btn" onclick="addClassify()">入栈分类</button>
-<button class="viz-btn" onclick="resetClassify()" style="background:#95a5a6">重置</button>
+<input type="number" id="singleInput" value="12" style="width:100px" disabled>
+<button class="viz-btn success" onclick="addClassify()" disabled>入栈分类</button>
+<button class="viz-btn" onclick="resetClassify()" style="background:#95a5a6" disabled>重置</button>
 </div>
-<div class="shared-stack">
-<div>
-<div class="shared-label" style="color:#2e86c1">栈1(偶数)</div>
-<div class="shared-box" id="stackEven"><div class="stack-bottom"></div></div>
+<div class="input-group">
+<label>批量测试:</label>
+<input type="text" id="classifyData" value="12,7,8,5,4,3" style="width:250px">
+<button class="viz-btn" onclick="stepClassify()" style="background:#9b59b6" disabled>逐步分类演示</button>
 </div>
-<div>
-<div class="shared-label" style="color:#e67e22">栈2(奇数)</div>
-<div class="shared-box" id="stackOdd"><div class="stack-bottom"></div></div>
+<div style="text-align:center;padding:50px 20px">
+<div class="shared-stack-wrapper" id="sharedWrapper">
+<div class="shared-stack-label">两栈共享连续存储空间（偶数从左入，奇数从右入）</div>
+<div class="shared-box" id="sharedView" style="width:600px">
+<div class="shared-pointer-even" id="top1Pointer">TOP1(偶数)</div>
+<div class="shared-pointer-odd" id="top2Pointer">TOP2(奇数)</div>
+</div>
+<div style="margin-top:15px;color:#7f8c8d;font-size:0.9em;display:flex;justify-content:space-between;width:600px;margin-left:auto;margin-right:auto">
+<span>← 偶数端（栈底）</span>
+<span>奇数端（栈底） →</span>
+</div>
 </div>
 </div>
 <div class="code-container">
-<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 两栈共享 - 奇偶分类代码</div>
-<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 两栈共享结构
+<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 两栈共享空间 - 奇偶分类代码（横向存储）</div>
+<textarea class="code-textarea" readonly>// 两栈共享结构：一个横向数组，两个栈顶指针
 typedef struct {
-    int data[100];
-    int top1;  // 栈1栈顶
-    int top2;  // 栈2栈顶
+    int *data;     // 连续共享存储空间（横向数组）
+    int top1;      // 栈1(偶数)栈顶：从左端0位置开始，向右增长
+    int top2;      // 栈2(奇数)栈顶：从右端末尾位置开始，向左增长
+    int capacity;  // 总容量
 } DoubleStack;
 
-// 初始化
-void InitDoubleStack(DoubleStack *S) {
-    S->top1 = -1;
-    S->top2 = 100;
+// 初始化共享栈
+int InitDoubleStack(DoubleStack *S, int cap) {
+    S->data = (int*)malloc(cap * sizeof(int));
+    S->top1 = 0;      // 偶数栈初始为空，指向第一个位置（左端）
+    S->top2 = cap-1;  // 奇数栈初始为空，指向最后一个位置（右端）
+    S->capacity = cap;
+    return 1;
 }
 
-// 分类入栈
-void Classify(DoubleStack *S, int x) {
-    if(x % 2 == 0)
-        Push1(S, x);  // 偶数进栈1
-    else
-        Push2(S, x);  // 奇数进栈2
+// 入栈操作：偶数进栈1（左→右），奇数进栈2（右→左）
+int Push(DoubleStack *S, int x) {
+    if(S->top1 > S->top2) return 0; // 栈满：两指针交叉
+    if(x % 2 == 0) {
+        S->data[S->top1] = x; // 偶数从左端插入
+        S->top1++;
+    } else {
+        S->data[S->top2] = x; // 奇数从右端插入
+        S->top2--;
+    }
+    return 1;
 }
 
-// 栈满条件: top1 + 1 == top2</textarea>
+// 栈满条件：top1 > top2 （两栈顶指针交叉，空间用完）</textarea>
 </div>
 </div>
 
@@ -237,19 +279,19 @@ void Classify(DoubleStack *S, int x) {
 <div id="exprResult" style="margin:15px 0;padding:15px;background:#f8f9fa;border-radius:6px"></div>
 <div class="code-container">
 <div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 栈实现表达式求值核心代码</div>
-<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 利用栈实现表达式求值
+<textarea class="code-textarea" readonly>// 利用栈实现表达式求值
 int EvaluateExpression(char *expr) {
     InitStack(&OPTR); // 操作符栈
     InitStack(&OPND); // 操作数栈
     Push(&OPTR, '#');
     int i = 0;
-    while(expr[i] != ''@'' || GetTop(OPTR) != ''#'') {
+    while(expr[i] != '@' || GetTop(OPTR) != '#') {
         if(!IsOperator(expr[i])) {
             Push(&OPND, expr[i]-'0'); i++;
         } else {
             char theta = Precede(GetTop(OPTR), expr[i]);
-            if(theta == ''<'') { Push(&OPTR, expr[i]); i++; }
-            else if(theta == ''>'') {
+            if(theta == '<') { Push(&OPTR, expr[i]); i++; }
+            else if(theta == '>') {
                 Pop(&OPTR, &theta);
                 Pop(&OPND, &b); Pop(&OPND, &a);
                 Push(&OPND, Operate(a, theta, b));
@@ -270,6 +312,7 @@ int EvaluateExpression(char *expr) {
 <div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
 
 <script>
+/* ========== 全局工具 ========== */
 function addLog(msg) {
     const logArea = document.getElementById('logArea');
     const time = new Date().toLocaleTimeString();
@@ -279,7 +322,11 @@ function addLog(msg) {
     logArea.appendChild(entry);
     logArea.scrollTop = logArea.scrollHeight;
 }
-function updateStep(id, msg) { document.getElementById(id).innerHTML = '<strong>当前状态：</strong>' + msg; }
+function updateStep(id, msg, isFull) {
+    let html = '<strong>当前状态：</strong>' + msg;
+    if (isFull === true) html += '<span class="stack-full-warning">⚠️ 栈已满，不能入栈！</span>';
+    document.getElementById(id).innerHTML = html;
+}
 function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
@@ -287,139 +334,324 @@ function switchTab(tab) {
     document.getElementById('tab-' + tab).classList.add('active');
 }
 
-// 基础栈
+/* ========== 基础栈部分（纵向） ========== */
 let stack = [];
-function renderStack() {
-    const view = document.getElementById('stackView');
-    let html = '';
-    for(let i=stack.length-1; i>=0; i--) {
-        html += '<div class="stack-item">' + stack[i] + '</div>';
+let stackCapacity = 0;
+const ITEM_HEIGHT = 40;
+const CELL_WIDTH = 80;
+
+function initStack() {
+    const cap = parseInt(document.getElementById('stackCapacity').value);
+    if (isNaN(cap) || cap < 1 || cap > 20) {
+        addLog('【错误】栈容量必须是1-20之间的整数');
+        return;
     }
-    html += '<div class="stack-bottom"></div>';
-    view.innerHTML = html;
-    document.getElementById('topArrow').style.display = stack.length > 0 ? 'block' : 'none';
-    updateStep('stepInfo', '栈顶元素: ' + (stack.length>0?stack[stack.length-1]:'空') + '  栈长度: ' + stack.length);
+    stackCapacity = cap;
+    stack = [];
+
+    const boxHeight = cap * ITEM_HEIGHT + 6;
+    const stackView = document.getElementById('stackView');
+    stackView.style.height = boxHeight + 'px';
+
+    let gridHtml = '';
+    for (let i = 0; i < cap; i++) {
+        gridHtml += '<div class="stack-grid-cell" data-index="' + i + '"></div>';
+    }
+    stackView.innerHTML = gridHtml
+        + '<div class="stack-bottom"></div>'
+        + '<div class="stack-top-pointer" id="topPointer">TOP →</div>';
+
+    document.getElementById('stackWrapper').classList.add('show');
+
+    document.getElementById('pushVal').disabled = false;
+    document.querySelectorAll('#tab-basic .viz-btn').forEach(function(btn){ btn.disabled = false; });
+
+    renderBasicStack();
+    addLog('【操作】InitStack(&S, ' + cap + ') → 初始化容量为' + cap + '的空顺序栈成功，矩形划分为' + cap + '个等大方格，TOP指向第1个方格（最下方）');
+    updateStep('stepInfo', '已初始化容量为' + cap + '的空栈，矩形划分为' + cap + '个等大方格，TOP指向第一个待插入位置', false);
 }
+
+function renderBasicStack() {
+    const view = document.getElementById('stackView');
+    const pointer = document.getElementById('topPointer');
+
+    // 清空元素（保留方格、底部线、指针）
+    view.querySelectorAll('.stack-item').forEach(function(el){ el.remove(); });
+
+    for (let i = 0; i < stack.length; i++) {
+        const item = document.createElement('div');
+        item.className = 'stack-item';
+        item.textContent = stack[i];
+        item.style.bottom = (3 + i * ITEM_HEIGHT) + 'px';
+        item.style.height = ITEM_HEIGHT + 'px';
+        item.style.lineHeight = ITEM_HEIGHT + 'px';
+        view.appendChild(item);
+    }
+
+    const pointerBottom = 3 + stack.length * ITEM_HEIGHT;
+    pointer.style.bottom = pointerBottom + 'px';
+    pointer.style.top = 'auto';
+
+    const isFull = stack.length >= stackCapacity;
+    let statusMsg = '栈容量: ' + stackCapacity + '，元素个数: ' + stack.length + '/' + stackCapacity + '，';
+    if (stack.length === 0) {
+        statusMsg += '栈为空，TOP指向第一个方格';
+    } else if (isFull) {
+        statusMsg += '栈顶元素: ' + stack[stack.length - 1] + '，栈已满';
+    } else {
+        statusMsg += '栈顶元素: ' + stack[stack.length - 1] + '，TOP指向下一个待插入方格';
+    }
+    // 关键：正常渲染时，即使栈已满也不显示"不能入栈"警告
+    updateStep('stepInfo', statusMsg, false);
+}
+
 function pushStack() {
+    if (stackCapacity === 0) { addLog('【错误】请先初始化栈'); return; }
     const val = document.getElementById('pushVal').value.trim();
-    if(val === '') { addLog('【错误】请输入入栈元素'); return; }
-    if(stack.length >= 100) { addLog('【错误】栈已满!'); return; }
+    if (val === '') { addLog('【错误】请输入入栈元素'); return; }
+
+    // 关键：只有尝试入栈时栈已满，才显示"栈已满，不能入栈！"警告
+    if (stack.length >= stackCapacity) {
+        addLog('【错误】栈已满，不能入栈!');
+        updateStep('stepInfo',
+            '栈容量: ' + stackCapacity + '，元素个数: ' + stack.length + '/' + stackCapacity +
+            '，栈顶元素: ' + stack[stack.length - 1],
+            true);
+        return;
+    }
+
     stack.push(val);
-    renderStack();
-    addLog('【操作】Push(&amp;S, ' + val + ') → 元素' + val + '入栈，top指针上移');
-    addLog('【结果】栈长度: ' + stack.length + '，栈顶元素: ' + val);
+    renderBasicStack();
+    addLog('【操作】Push(&S, ' + val + ') → 元素' + val + '插入第' + stack.length + '个位置，TOP指针上移一位，指向新的待插入位置');
 }
+
 function popStack() {
-    if(stack.length === 0) { addLog('【错误】栈为空，无法出栈!'); return; }
+    if (stackCapacity === 0) { addLog('【错误】请先初始化栈'); return; }
+    if (stack.length === 0) { addLog('【错误】栈为空，无法出栈!'); return; }
     const val = stack.pop();
-    renderStack();
-    updateStep('stepInfo', '出栈元素: ' + val);
-    addLog('【操作】Pop(&amp;S, &amp;x) → 元素' + val + '出栈，top指针下移');
-    addLog('【结果】出栈元素: ' + val + '，当前栈长度: ' + stack.length);
+    renderBasicStack();
+    addLog('【操作】Pop(&S, &x) → 栈顶元素' + val + '出栈，TOP指针下移一位');
+    updateStep('stepInfo', '出栈元素: ' + val + '，剩余元素个数: ' + stack.length + '，TOP指向新栈顶上方', false);
 }
+
 function peekStack() {
-    if(stack.length === 0) { addLog('【错误】栈为空!'); return; }
-    addLog('【操作】GetTop(S) → 栈顶元素: ' + stack[stack.length-1]);
-    updateStep('stepInfo', '栈顶元素: ' + stack[stack.length-1]);
+    if (stack.length === 0) { addLog('【错误】栈为空!'); return; }
+    addLog('【操作】GetTop(S) → 栈顶元素: ' + stack[stack.length - 1]);
+    updateStep('stepInfo', '栈顶元素: ' + stack[stack.length - 1], false);
 }
-function clearStack() { stack=[]; renderStack(); addLog('【操作】清空栈'); }
+
+function clearStack() {
+    stack = [];
+    renderBasicStack();
+    addLog('【操作】清空栈元素，回到初始空栈状态，TOP回到第一个方格');
+}
+
 function quickPush() {
+    if (stackCapacity === 0) { addLog('【错误】请先初始化栈'); return; }
     clearStack();
-    const vals = [1,2,3,4,5];
-    let i=0;
+    const vals = [1, 2, 3, 4, 5];
+    if (vals.length > stackCapacity) {
+        addLog('【提示】当前栈容量为' + stackCapacity + '，将入栈前' + stackCapacity + '个元素');
+    }
+    let i = 0;
     const interval = setInterval(function() {
-        if(i>=vals.length){clearInterval(interval);addLog('【完成】快速入栈完成');return;}
+        // 关键：i 达到容量或数据长度就停止，避免触发栈满警告
+        if (i >= vals.length || i >= stackCapacity) {
+            clearInterval(interval);
+            if (stack.length >= stackCapacity) {
+                addLog('【完成】快速入栈完成：元素从下往上依次堆叠，1在最底部不动，' + stack[stack.length - 1] + '在最顶部为栈顶，栈已满');
+            } else {
+                addLog('【完成】快速入栈完成：元素从下往上依次堆叠，先入栈元素位置不动，最后入栈元素为栈顶');
+            }
+            return;
+        }
         document.getElementById('pushVal').value = vals[i];
         pushStack();
         i++;
-    }, 400);
+    }, 500);
 }
+
 function quickPopAll() {
-    if(stack.length===0) { addLog('【错误】栈为空'); return; }
+    if (stack.length === 0) { addLog('【错误】栈为空'); return; }
+    addLog('【操作】开始依次出栈，遵循后进先出顺序');
     const interval = setInterval(function() {
-        if(stack.length===0){clearInterval(interval);addLog('【完成】栈已空');return;}
+        if (stack.length === 0) {
+            clearInterval(interval);
+            addLog('【完成】栈已空，出栈顺序与入栈顺序相反，TOP回到第一个方格');
+            return;
+        }
         popStack();
     }, 500);
 }
 
-// 奇偶分类
-let evenStack=[], oddStack=[];
-function renderClassify() {
-    const evenView = document.getElementById('stackEven');
-    const oddView = document.getElementById('stackOdd');
-    let eHtml = '';
-    for(let i=evenStack.length-1; i>=0; i--) eHtml += '<div class="shared-item left">'+evenStack[i]+'</div>';
-    eHtml += '<div class="stack-bottom"></div>';
-    evenView.innerHTML = eHtml;
-    
-    let oHtml = '';
-    for(let i=oddStack.length-1; i>=0; i--) oHtml += '<div class="shared-item right">'+oddStack[i]+'</div>';
-    oHtml += '<div class="stack-bottom"></div>';
-    oddView.innerHTML = oHtml;
-    
-    updateStep('stepInfo2', '偶数栈: ['+evenStack.join(',')+']  奇数栈: ['+oddStack.join(',')+']');
-}
-function addClassify() {
-    const val = parseInt(document.getElementById('singleInput').value);
-    if(isNaN(val)) { addLog('【错误】请输入有效数字'); return; }
-    if(val % 2 === 0) {
-        evenStack.push(val);
-        addLog('【操作】'+val+'是偶数 → 入栈1(偶数栈)');
-    } else {
-        oddStack.push(val);
-        addLog('【操作】'+val+'是奇数 → 入栈2(奇数栈)');
-    }
-    renderClassify();
-}
-function classifyData() {
-    const data = document.getElementById('classifyData').value.split(',').map(Number);
-    evenStack = []; oddStack = [];
-    data.forEach(function(v) {
-        if(v % 2 === 0) evenStack.push(v);
-        else oddStack.push(v);
-    });
-    renderClassify();
-    addLog('【操作】批量分类: 输入序列=['+data.join(',')+']');
-    addLog('【结果】偶数栈: ['+evenStack.join(',')+']  奇数栈: ['+oddStack.join(',')+']');
-}
-function stepClassify() {
-    const data = document.getElementById('classifyData').value.split(',').map(Number);
-    evenStack = []; oddStack = [];
-    let i = 0;
-    addLog('【操作】逐步分类开始...');
-    const interval = setInterval(function() {
-        if(i>=data.length){clearInterval(interval);addLog('【完成】分类完成');return;}
-        const v = data[i];
-        if(v%2===0) { evenStack.push(v); addLog('  '+v+'是偶数 → 入栈1'); }
-        else { oddStack.push(v); addLog('  '+v+'是奇数 → 入栈2'); }
-        renderClassify();
-        i++;
-    }, 600);
-}
-function resetClassify() { evenStack=[];oddStack=[];renderClassify(); addLog('【操作】重置双栈'); }
+/* ========== 两栈共享部分（横向） ========== */
+let evenCount = 0;
+let oddCount = 0;
+let sharedElements = [];
+let sharedCapacity = 0;
+const CELL_SIZE = 60;
 
-// 表达式求值
+function initSharedStack() {
+    const cap = parseInt(document.getElementById('sharedCapacity').value);
+    if (isNaN(cap) || cap < 2 || cap > 20) {
+        addLog('【错误】共享栈容量必须是2-20之间的整数');
+        return;
+    }
+    sharedCapacity = cap;
+    evenCount = 0;
+    oddCount = 0;
+    sharedElements = [];
+
+    const boxWidth = cap * CELL_SIZE + 6;
+    const sharedView = document.getElementById('sharedView');
+    sharedView.style.width = boxWidth + 'px';
+
+    let gridHtml = '';
+    for (let i = 0; i < cap; i++) {
+        gridHtml += '<div class="shared-grid-cell" style="width:' + CELL_SIZE + 'px" data-index="' + i + '"></div>';
+    }
+    gridHtml += '<div class="shared-pointer-even" id="top1Pointer">TOP1(偶数)</div>';
+    gridHtml += '<div class="shared-pointer-odd" id="top2Pointer">TOP2(奇数)</div>';
+    sharedView.innerHTML = gridHtml;
+
+    document.getElementById('sharedWrapper').classList.add('show');
+    document.querySelector('#sharedWrapper > div:last-child').style.width = boxWidth + 'px';
+
+    document.getElementById('singleInput').disabled = false;
+    document.querySelectorAll('#tab-classify .viz-btn').forEach(function(btn){ btn.disabled = false; });
+
+    renderSharedStack();
+    addLog('【操作】InitDoubleStack(&S, ' + cap + ') → 初始化容量为' + cap + '的横向共享栈：矩形划分为' + cap + '个等大方格，TOP1(偶数)指向左端第一个方格，TOP2(奇数)指向右端最后一个方格');
+    updateStep('stepInfo2', '共享栈总容量' + cap + '，已用0/' + cap + '，矩形划分为' + cap + '个等大横向方格，可进行奇偶分类入栈', false);
+}
+
+function renderSharedStack() {
+    const view = document.getElementById('sharedView');
+    const top1 = document.getElementById('top1Pointer');
+    const top2 = document.getElementById('top2Pointer');
+
+    view.querySelectorAll('.shared-item-even, .shared-item-odd').forEach(function(el){ el.remove(); });
+
+    const evens = sharedElements.filter(function(e){ return e.type === 'even'; });
+    evens.forEach(function(el, idx) {
+        const item = document.createElement('div');
+        item.className = 'shared-item-even';
+        item.textContent = el.value;
+        item.style.left = (3 + idx * CELL_SIZE) + 'px';
+        item.style.width = CELL_SIZE + 'px';
+        item.style.lineHeight = (CELL_SIZE - 6) + 'px';
+        view.appendChild(item);
+    });
+
+    const odds = sharedElements.filter(function(e){ return e.type === 'odd'; });
+    odds.forEach(function(el, idx) {
+        const item = document.createElement('div');
+        item.className = 'shared-item-odd';
+        item.textContent = el.value;
+        const pos = sharedCapacity - 1 - idx;
+        item.style.left = (3 + pos * CELL_SIZE) + 'px';
+        item.style.width = CELL_SIZE + 'px';
+        item.style.lineHeight = (CELL_SIZE - 6) + 'px';
+        view.appendChild(item);
+    });
+
+    const top1Pos = 3 + evenCount * CELL_SIZE;
+    top1.style.left = top1Pos + 'px';
+
+    const top2Pos = 3 + (sharedCapacity - 1 - oddCount) * CELL_SIZE;
+    top2.style.left = top2Pos + 'px';
+
+    const used = evenCount + oddCount;
+    const isFull = used >= sharedCapacity;
+    let statusMsg = '共享栈总容量' + sharedCapacity + '，已用' + used + '/' + sharedCapacity +
+                    '，偶数个数:' + evenCount + '，奇数个数:' + oddCount;
+    if (isFull) statusMsg += '，栈已满';
+    // 关键：正常渲染时不显示警告，警告只在真正入栈失败时触发
+    updateStep('stepInfo2', statusMsg, false);
+}
+
+function addClassify() {
+    if (sharedCapacity === 0) { addLog('【错误】请先初始化共享栈'); return; }
+    const val = parseInt(document.getElementById('singleInput').value);
+    if (isNaN(val)) { addLog('【错误】请输入有效数字'); return; }
+
+    // 关键：尝试入栈时已满才显示警告
+    if (evenCount + oddCount >= sharedCapacity) {
+        addLog('【错误】共享栈已满，无法继续入栈!');
+        updateStep('stepInfo2',
+            '共享栈总容量' + sharedCapacity + '，已用' + sharedCapacity + '/' + sharedCapacity +
+            '，偶数个数:' + evenCount + '，奇数个数:' + oddCount,
+            true);
+        return;
+    }
+
+    if (val % 2 === 0) {
+        sharedElements.push({ value: val, type: 'even', pos: evenCount });
+        evenCount++;
+        addLog('【操作】' + val + '是偶数 → 从左端插入第' + evenCount + '个位置，TOP1(偶数)右移一格');
+    } else {
+        sharedElements.push({ value: val, type: 'odd', pos: sharedCapacity - 1 - oddCount });
+        oddCount++;
+        addLog('【操作】' + val + '是奇数 → 从右端插入第' + oddCount + '个位置，TOP2(奇数)左移一格');
+    }
+    renderSharedStack();
+}
+
+function stepClassify() {
+    if (sharedCapacity === 0) { addLog('【错误】请先初始化共享栈'); return; }
+    evenCount = 0; oddCount = 0; sharedElements = [];
+    renderSharedStack();
+    const data = document.getElementById('classifyData').value.split(',').map(Number);
+    let i = 0;
+    addLog('【操作】逐步分类开始，总容量' + sharedCapacity + '，偶数从左端向右入栈，奇数从右端向左入栈...');
+    const interval = setInterval(function() {
+        if (i >= data.length) {
+            clearInterval(interval);
+            const used = evenCount + oddCount;
+            addLog('【完成】分类完成，共享空间使用' + used + '/' + sharedCapacity + '，栈满条件为两指针相遇');
+            return;
+        }
+        if (evenCount + oddCount >= sharedCapacity) {
+            clearInterval(interval);
+            addLog('【提示】共享栈已满，提前结束分类');
+            return;
+        }
+        const v = data[i];
+        document.getElementById('singleInput').value = v;
+        addClassify();
+        i++;
+    }, 700);
+}
+
+function resetClassify() {
+    evenCount = 0;
+    oddCount = 0;
+    sharedElements = [];
+    renderSharedStack();
+    addLog('【操作】重置共享栈，TOP1回到左端第一个方格，TOP2回到右端最后一个方格');
+}
+
+/* ========== 表达式求值 ========== */
 function evalExpr() {
     const expr = document.getElementById('exprInput').value;
     addLog('【操作】表达式求值: ' + expr);
-    
-    // 简单实现: 使用eval（仅用于演示）
+
     try {
-        // 安全评估
-        const result = Function('"use strict";return (' + expr.replace(/[^0-9+\-*/().]/g,'') + ')')();
-        document.getElementById('exprResult').innerHTML = 
+        const clean = expr.replace(/[^0-9+\-*/().]/g, '');
+        const result = Function('"use strict";return (' + clean + ')')();
+        document.getElementById('exprResult').innerHTML =
             '<strong>表达式:</strong> ' + expr + '<br>' +
             '<strong>计算结果:</strong> ' + result + '<br>' +
-            '<strong>运算过程:</strong> 操作数栈依次入栈 → 操作符栈比较优先级 → 执行运算 → 最终结果';
+            '<strong>运算过程:</strong> 操作数依次从栈顶入栈 → 操作符栈比较优先级 → 栈顶元素先出栈运算 → 结果入栈 → 最终得到结果';
         addLog('【结果】表达式 ' + expr + ' = ' + result);
-        addLog('【过程】1. 操作数入栈 → 2. 操作符比较优先级 → 3. 执行运算 → 4. 得到结果');
-    } catch(e) {
-        document.getElementById('exprResult').innerHTML = '<span style="color:red">表达式有误，请检查</span>';
+        addLog('【过程】遵循栈后进先出规则：先入栈的操作数后参与运算');
+    } catch (e) {
+        document.getElementById('exprResult').innerHTML = '<span style="color:red">表达式有误，请检查（仅支持数字和+ - * / ()运算）</span>';
         addLog('【错误】表达式语法错误');
     }
 }
 
-addLog('系统就绪。请选择操作标签页（基础栈操作/奇偶分类/表达式求值）');
+addLog('系统就绪。使用说明：1.基础栈：先设置容量点初始化，矩形按容量分成等大方格，TOP在框外始终对齐待插入方格，空栈指向第一个方格，元素满了显示"栈已满"提示（但不会显示"不能入栈"警告，只有尝试继续入栈时才会警告）；2.奇偶双栈：单个横向矩形，左端进偶数、右端进奇数，TOP1和TOP2都在矩形框上方分别对齐两端待插入位置。');
 </script>
 </body>
 </html>
