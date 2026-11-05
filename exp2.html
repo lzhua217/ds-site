@@ -28,7 +28,7 @@ tr:hover{background:#f5f5f5}
 ul{padding-left:20px}li{margin-bottom:6px}
 .viz-container{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);padding:25px;margin:20px 0}
 .viz-title{font-size:1.2em;color:#1a5276;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #eef2f7}
-.viz-area{min-height:200px;background:#fafbfc;border:2px dashed #dce1e8;border-radius:8px;padding:20px;position:relative;overflow-x:auto}
+.viz-area{min-height:100px;background:#fafbfc;border:2px dashed #dce1e8;border-radius:8px;padding:20px;position:relative;overflow-x:auto}
 .viz-controls{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
 .viz-btn{padding:8px 18px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.95em;transition:all 0.2s}
 .viz-btn:hover{background:#2980b9;transform:translateY(-1px)}
@@ -39,21 +39,80 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .viz-btn.warning{background:#f39c12}
 .viz-btn.warning:hover{background:#d68910}
 .viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.linked-list{display:flex;align-items:center;gap:0;padding:20px 10px;min-height:80px;flex-wrap:wrap}
-.node{display:inline-flex;align-items:center;background:#fff;border:2px solid #3498db;border-radius:8px;margin:5px;position:relative;transition:all 0.3s;box-shadow:0 2px 8px rgba(52,152,219,0.15)}
-.node.highlight{background:#fff3cd;border-color:#f39c12;box-shadow:0 0 15px rgba(243,156,18,0.4)}
-.node.reverse{background:#d5f5e3;border-color:#27ae60}
-.node-arrow{padding:0 8px;color:#3498db;font-size:1.2em;font-weight:bold}
-.head-label{background:#1a5276;color:#fff;padding:5px 12px;border-radius:15px;font-size:0.85em;margin-right:10px;font-weight:bold}
-.null-pointer{color:#95a5a6;font-style:italic;padding:0 10px}
+
+/* ===== 结点可视化（数据域 + 指针域，2 部分） ===== */
+#listView1Remaining, #listView1Result,
+#listViewA, #listViewB, #listViewC, #josephusView{
+    display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:90px;padding:10px 4px;
+}
+.head-label{
+    background:#1a5276;color:#fff;padding:8px 14px;border-radius:8px;
+    font-size:0.85em;font-weight:bold;box-shadow:0 2px 6px rgba(26,82,118,0.3);flex-shrink:0;
+}
+.head-arrow{color:#3498db;font-size:1.3em;font-weight:bold;flex-shrink:0}
+
+.node{
+    display:inline-flex;align-items:stretch;
+    background:#fff;border:2px solid #3498db;border-radius:8px;
+    position:relative;
+    box-shadow:0 2px 8px rgba(52,152,219,0.15);
+    transition:all 0.3s;
+    flex-shrink:0;
+}
+.node.highlight{
+    border-color:#f39c12;
+    background:#fff3cd;
+    box-shadow:0 0 18px rgba(243,156,18,0.6);
+    transform:translateY(-3px);
+}
+.node.highlight .node-ptr{background:#fdebd0}
+.node.highlight .node-ptr.is-null{background:#fdebd0;color:#d68910}
+.node.highlight .node-ptr.is-circular{background:#fdebd0;color:#d68910}
+
+.node-cell{
+    display:flex;align-items:center;justify-content:center;
+    padding:10px 16px;
+    border-right:1px solid #c8d9e8;
+    min-width:56px;min-height:52px;
+    font-size:0.95em;font-weight:bold;color:#2c3e50;
+    white-space:nowrap;
+}
+
+/* 指针域 */
+.node-ptr{
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+    min-width:36px;padding:0;
+    background:#eaf2f8;
+    border-radius:0 6px 6px 0;
+    font-size:1.2em;font-weight:bold;color:#3498db;
+}
+.node-ptr.is-null{color:#95a5a6;background:#f4f6f8}
+.node-ptr.is-circular{color:#27ae60;background:#eafaf0}
+
+/* 非尾结点：绘制超出矩形框的指向下一结点的长箭头 */
+.node-ptr.is-link::before{
+    content:'';position:absolute;
+    top:50%;left:6px;
+    width:30px;height:2px;background:#3498db;
+    transform:translateY(-50%);pointer-events:none;
+}
+.node-ptr.is-link::after{
+    content:'';position:absolute;
+    top:50%;left:36px;
+    transform:translateY(-50%);
+    width:0;height:0;
+    border-left:8px solid #3498db;
+    border-top:4px solid transparent;
+    border-bottom:4px solid transparent;
+    pointer-events:none;
+}
+.node.highlight .node-ptr.is-link::before{background:#d68910}
+.node.highlight .node-ptr.is-link::after{border-left-color:#d68910}
+
 .code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
 .code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
-.code-keyword{color:#9b59b6}
-.code-type{color:#3498db}
-.code-comment{color:#7f8c8d;font-style:italic}
-.code-string{color:#27ae60}
-.code-number{color:#e67e22}
-.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
+.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:280px;overflow-y:auto}
 .log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
 .log-entry:last-child{border-bottom:none}
 .log-time{color:#666;margin-right:8px}
@@ -66,7 +125,8 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .tab-btn.active{background:#3498db;color:#fff}
 .tab-content{display:none}
 .tab-content.active{display:block}
-.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}
+</style>
 </head>
 <body>
 <div class="header"><h1>实验二：单链表（二）</h1><p>AI链表高级操作实验室 · 虚拟仿真实验教学</p></div>
@@ -113,7 +173,10 @@ ul{padding-left:20px}li{margin-bottom:6px}
 <button class="viz-btn warning" onclick="reverseList()">就地逆置</button>
 <button class="viz-btn" onclick="clearList1()" style="background:#95a5a6">清空</button>
 </div>
-<div class="viz-area"><div id="listView1"><span class="head-label">HEAD</span><span class="null-pointer"> → NULL</span></div></div>
+<div style="margin:10px 0"><strong>待处理结点（p）:</strong></div>
+<div class="viz-area"><div id="listView1Remaining"></div></div>
+<div style="margin:10px 0"><strong>已逆置链表（HEAD）:</strong></div>
+<div class="viz-area"><div id="listView1Result"></div></div>
 <div class="code-container">
 <div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 就地逆置算法代码</div>
 <textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 单链表就地逆置
@@ -145,12 +208,12 @@ void ReverseList(LinkList L) {
 <button class="viz-btn warning" onclick="mergeList()">合并为非递减</button>
 <button class="viz-btn" onclick="clearList2()" style="background:#95a5a6">清空</button>
 </div>
-<div style="margin:10px 0"><strong>链表A:</strong></div>
-<div class="viz-area"><div id="listViewA"><span class="head-label">HA</span><span class="null-pointer"> → NULL</span></div></div>
-<div style="margin:10px 0"><strong>链表B:</strong></div>
-<div class="viz-area"><div id="listViewB"><span class="head-label">HB</span><span class="null-pointer"> → NULL</span></div></div>
-<div style="margin:10px 0"><strong>合并结果:</strong></div>
-<div class="viz-area"><div id="listViewC"><span class="head-label">HC</span><span class="null-pointer"> → NULL</span></div></div>
+<div style="margin:10px 0"><strong>链表A（pa 出发）:</strong></div>
+<div class="viz-area"><div id="listViewA"></div></div>
+<div style="margin:10px 0"><strong>链表B（pb 出发）:</strong></div>
+<div class="viz-area"><div id="listViewB"></div></div>
+<div style="margin:10px 0"><strong>合并结果（HC）:</strong></div>
+<div class="viz-area"><div id="listViewC"></div></div>
 <div class="code-container">
 <div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 有序链表合并算法</div>
 <textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 合并两个非递减链表为一个非递减链表
@@ -184,7 +247,7 @@ void MergeList(LinkList LA, LinkList LB, LinkList *LC) {
 <button class="viz-btn" onclick="autoJosephus()">自动运行</button>
 <button class="viz-btn" onclick="clearList3()" style="background:#95a5a6">清空</button>
 </div>
-<div class="viz-area"><div id="josephusView">请创建约瑟夫环</div></div>
+<div class="viz-area"><div id="josephusView"></div></div>
 <div class="code-container">
 <div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 约瑟夫环算法</div>
 <textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 约瑟夫环 - 循环链表实现
@@ -218,6 +281,22 @@ void Josephus(int n, int m) {
 <div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
 
 <script>
+/* ============ 状态变量 ============ */
+let listCreated1 = false;
+let list1 = [];
+
+let mergeCreated = false;
+let listA = [], listB = [], listC = [];
+
+let josephusCreated = false;
+let josephusCircle = [];
+let josephusIdx = 0;
+let josephusM_val = 3;
+
+let isReversing = false;
+let isMerging = false;
+
+/* ============ 通用工具 ============ */
 function addLog(msg) {
     const logArea = document.getElementById('logArea');
     const time = new Date().toLocaleTimeString();
@@ -227,24 +306,18 @@ function addLog(msg) {
     logArea.appendChild(entry);
     logArea.scrollTop = logArea.scrollHeight;
 }
+
 function updateStep(id, msg) {
     document.getElementById(id).innerHTML = '<strong>当前状态：</strong>' + msg;
 }
-function renderList(viewId, data, label) {
-    label = label || 'HEAD';
-    const view = document.getElementById(viewId);
-    if (data.length === 0) {
-        view.innerHTML = '<span class="head-label">' + label + '</span><span class="null-pointer"> → NULL</span>';
-        return;
-    }
-    let html = '<span class="head-label">' + label + '</span>';
-    data.forEach(function(v, idx) {
-        html += '<div class="node"><div class="node-data">' + v + '</div></div>';
-        if (idx < data.length - 1) html += '<span class="node-arrow">→</span>';
+
+function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/[&<>"']/g, function(c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
-    html += '<span class="node-arrow">→</span><span class="null-pointer">NULL</span>';
-    view.innerHTML = html;
 }
+
 function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
@@ -252,102 +325,263 @@ function switchTab(tab) {
     document.getElementById('tab-' + tab).classList.add('active');
 }
 
-// 就地逆置
-let list1 = [];
+/* ============ 结点构建（数据域 + 指针域，2 部分） ============ */
+function buildNode(data, isTail, isHighlight, isCircular) {
+    const hl = isHighlight ? ' highlight' : '';
+    let ptrHtml;
+    if (isTail) {
+        ptrHtml = isCircular
+            ? '<div class="node-ptr is-circular">↻</div>'
+            : '<div class="node-ptr is-null">∧</div>';
+    } else {
+        ptrHtml = '<div class="node-ptr is-link"></div>';
+    }
+    return '<div class="node' + hl + '">'
+         +   '<div class="node-cell">' + escapeHtml(data) + '</div>'
+         +   ptrHtml
+         + '</div>';
+}
+
+/* 通用线性链表渲染到任意 view */
+function renderLinear(viewId, data, label, emptyText) {
+    const view = document.getElementById(viewId);
+    if (!data || data.length === 0) {
+        if (emptyText) {
+            view.innerHTML = '<span class="head-label">' + label + '</span>'
+                           + '<span style="color:#888;padding:0 8px;font-style:italic">' + emptyText + '</span>';
+        } else {
+            view.innerHTML = '';
+        }
+        return;
+    }
+    let html = '<span class="head-label">' + label + '</span><span class="head-arrow">→</span>';
+    data.forEach(function(v, idx) {
+        const isTail = (idx === data.length - 1);
+        html += buildNode(v, isTail, false, false);
+    });
+    view.innerHTML = html;
+}
+
+/* ============ 就地逆置：逐步动画 ============ */
+function renderReverseViews(remaining, result) {
+    renderLinear('listView1Remaining', remaining, 'p', '（空）');
+    renderLinear('listView1Result', result, 'HEAD', '（空）');
+}
+
 function initReverse() {
-    const data = document.getElementById('listData1').value.split(',').map(Number);
+    if (isReversing) { addLog('【提示】逆置动画进行中，请稍候'); return; }
+    const str = document.getElementById('listData1').value.trim();
+    if (!str) { addLog('【提示】请输入链表数据'); return; }
+    const data = str.split(',').map(Number).filter(function(x){ return !isNaN(x); });
+    if (data.length === 0) { addLog('【提示】请输入有效数据'); return; }
     list1 = data;
-    renderList('listView1', list1);
+    listCreated1 = true;
+    renderReverseViews(list1, []);
     updateStep('stepInfo', '链表已创建: ' + list1.join('→'));
     addLog('【操作】创建链表: ' + list1.join(','));
 }
+
 function reverseList() {
-    if (list1.length <= 1) { addLog('【提示】链表长度<=1，无需逆置'); return; }
-    addLog('【操作】调用 ReverseList() 就地逆置链表');
-    addLog('  算法思路: 逐个将结点从原链表摘下，插入到头结点之后');
-    
-    let reversed = list1.slice().reverse();
-    renderList('listView1', reversed);
-    updateStep('stepInfo', '逆置完成! 结果: ' + reversed.join('→'));
-    addLog('【逆置过程】');
-    for(let i=0; i<list1.length; i++) {
-        addLog('  第' + (i+1) + '步: 将结点' + list1[i] + '从原位置摘下，插入到头结点后');
+    if (isReversing) return;
+    if (!listCreated1) {
+        addLog('【错误】请先点击"创建链表"');
+        updateStep('stepInfo', '请先点击"创建链表"');
+        return;
     }
-    addLog('【结果】链表已就地逆置: ' + reversed.join(','));
-}
-function clearList1() { list1=[]; renderList('listView1',[]); updateStep('stepInfo','链表已清空'); }
+    if (list1.length <= 1) { addLog('【提示】链表长度<=1，无需逆置'); return; }
 
-// 有序合并
-let listA=[], listB=[];
+    isReversing = true;
+    addLog('【操作】调用 ReverseList() 就地逆置链表（逐步演示）');
+    addLog('  算法核心: 先把 L->next 置空，然后循环 { q=p->next; p->next=L->next; L->next=p; p=q }');
+
+    let remaining = list1.slice();
+    let result = [];
+    let step = 0;
+    renderReverseViews(remaining, result);
+    updateStep('stepInfo', '准备开始逆置...');
+
+    function nextStep() {
+        if (remaining.length === 0) {
+            list1 = result.slice();
+            isReversing = false;
+            updateStep('stepInfo', '逆置完成! 结果: ' + list1.join('→'));
+            addLog('【结果】链表已就地逆置: ' + list1.join(','));
+            return;
+        }
+        const node = remaining.shift();
+        result.unshift(node);
+        step++;
+        renderReverseViews(remaining, result);
+        const remStr = remaining.length > 0 ? remaining.join('→') : '（空）';
+        updateStep('stepInfo', '第' + step + '步：p→' + remStr + '，已逆置 ' + result.join('→'));
+        addLog('第' + step + '步：摘下结点 ' + node + ' 插到头结点后 → 已逆置 ['
+            + result.join(',') + ']，待处理 [' + (remaining.length ? remaining.join(',') : '空') + ']');
+        setTimeout(nextStep, 900);
+    }
+    setTimeout(nextStep, 500);
+}
+
+function clearList1() {
+    if (isReversing) { addLog('【提示】请等待逆置动画完成'); return; }
+    list1 = [];
+    listCreated1 = false;
+    document.getElementById('listView1Remaining').innerHTML = '';
+    document.getElementById('listView1Result').innerHTML = '';
+    updateStep('stepInfo', '链表已清空');
+    addLog('【操作】清空链表');
+}
+
+/* ============ 有序合并：逐步动画 ============ */
+function renderMergeViews(pa, pb, rc) {
+    renderLinear('listViewA', pa, 'HA', '（空）');
+    renderLinear('listViewB', pb, 'HB', '（空）');
+    renderLinear('listViewC', rc, 'HC', '（空）');
+}
+
 function initMerge() {
-    listA = document.getElementById('listA').value.split(',').map(Number);
-    listB = document.getElementById('listB').value.split(',').map(Number);
-    renderList('listViewA', listA, 'HA');
-    renderList('listViewB', listB, 'HB');
-    renderList('listViewC', [], 'HC');
-    updateStep('stepInfo2', '链表A: '+listA.join(',')+'  链表B: '+listB.join(','));
-    addLog('【操作】创建两个有序链表 A=['+listA.join(',')+'] B=['+listB.join(',')+']');
+    if (isMerging) { addLog('【提示】合并动画进行中，请稍候'); return; }
+    const aStr = document.getElementById('listA').value.trim();
+    const bStr = document.getElementById('listB').value.trim();
+    if (!aStr || !bStr) { addLog('【提示】请输入两个链表的数据'); return; }
+    listA = aStr.split(',').map(Number).filter(function(x){ return !isNaN(x); });
+    listB = bStr.split(',').map(Number).filter(function(x){ return !isNaN(x); });
+    if (listA.length === 0 || listB.length === 0) { addLog('【提示】请输入有效数据'); return; }
+    listC = [];
+    mergeCreated = true;
+    renderMergeViews(listA, listB, []);
+    updateStep('stepInfo2', '链表A: ' + listA.join(',') + '  链表B: ' + listB.join(','));
+    addLog('【操作】创建两个有序链表 A=[' + listA.join(',') + '] B=[' + listB.join(',') + ']');
 }
-function mergeList() {
-    if(listA.length===0 && listB.length===0) { addLog('【错误】链表为空'); return; }
-    addLog('【操作】调用 MergeList() 合并两个非递减链表');
-    let merged = listA.concat(listB).sort(function(a,b){return a-b});
-    renderList('listViewC', merged, 'HC');
-    updateStep('stepInfo2', '合并完成! 结果: ' + merged.join('→'));
-    addLog('【合并过程】双指针法: 比较A和B当前结点，取较小者接入结果链表');
-    addLog('【结果】合并为非递减链表: ' + merged.join(','));
-}
-function clearList2() { listA=[];listB=[];renderList('listViewA',[]);renderList('listViewB',[]);renderList('listViewC',[]); }
 
-// 约瑟夫环
-let josephusCircle = [];
-let josephusIdx = 0;
-let josephusM_val = 3;
+function mergeList() {
+    if (isMerging) return;
+    if (!mergeCreated) {
+        addLog('【错误】请先点击"创建链表"');
+        updateStep('stepInfo2', '请先点击"创建链表"');
+        return;
+    }
+    isMerging = true;
+    addLog('【操作】调用 MergeList() 合并两个非递减链表（逐步演示）');
+    addLog('  算法核心: 双指针 pa、pb，比较当前结点，较小者接入结果链表');
+
+    let pa = listA.slice();
+    let pb = listB.slice();
+    let rc = [];
+    let step = 0;
+    renderMergeViews(pa, pb, rc);
+    updateStep('stepInfo2', '准备开始合并...');
+
+    function nextStep() {
+        if (pa.length === 0 && pb.length === 0) {
+            listC = rc.slice();
+            isMerging = false;
+            renderMergeViews([], [], rc);
+            updateStep('stepInfo2', '合并完成! 结果: ' + listC.join('→'));
+            addLog('【结果】合并为非递减链表: ' + listC.join(','));
+            return;
+        }
+        step++;
+        if (pa.length > 0 && pb.length > 0) {
+            const aHead = pa[0], bHead = pb[0];
+            if (aHead <= bHead) {
+                pa.shift();
+                rc.push(aHead);
+                addLog('第' + step + '步：比较 pa=' + aHead + ' ≤ pb=' + bHead + '，取A的结点 ' + aHead + ' 接入结果');
+            } else {
+                pb.shift();
+                rc.push(bHead);
+                addLog('第' + step + '步：比较 pa=' + aHead + ' > pb=' + bHead + '，取B的结点 ' + bHead + ' 接入结果');
+            }
+        } else if (pa.length > 0) {
+            const node = pa.shift();
+            rc.push(node);
+            addLog('第' + step + '步：链表B已空，追加A的剩余结点 ' + node);
+        } else {
+            const node = pb.shift();
+            rc.push(node);
+            addLog('第' + step + '步：链表A已空，追加B的剩余结点 ' + node);
+        }
+        renderMergeViews(pa, pb, rc);
+        updateStep('stepInfo2', '第' + step + '步：结果链表 ' + (rc.length ? rc.join('→') : '（空）'));
+        setTimeout(nextStep, 700);
+    }
+    setTimeout(nextStep, 500);
+}
+
+function clearList2() {
+    if (isMerging) { addLog('【提示】请等待合并动画完成'); return; }
+    listA = []; listB = []; listC = [];
+    mergeCreated = false;
+    document.getElementById('listViewA').innerHTML = '';
+    document.getElementById('listViewB').innerHTML = '';
+    document.getElementById('listViewC').innerHTML = '';
+    updateStep('stepInfo2', '已清空');
+    addLog('【操作】清空链表A、B及合并结果');
+}
+
+/* ============ 约瑟夫环 ============ */
+function renderJosephus() {
+    const view = document.getElementById('josephusView');
+    if (!josephusCreated) { view.innerHTML = ''; return; }
+    if (josephusCircle.length === 0) {
+        view.innerHTML = '<span style="color:#888;font-style:italic;padding:20px">所有人员已出列</span>';
+        return;
+    }
+    let html = '';
+    josephusCircle.forEach(function(v, idx) {
+        const isTail = (idx === josephusCircle.length - 1);
+        const isHighlight = (idx === josephusIdx);
+        html += buildNode(v, isTail, isHighlight, true);
+    });
+    view.innerHTML = html;
+}
+
 function initJosephus() {
     const n = parseInt(document.getElementById('josephusN').value);
     josephusM_val = parseInt(document.getElementById('josephusM').value);
+    if (isNaN(n) || n <= 0) { addLog('【提示】人数必须为正整数'); return; }
+    if (isNaN(josephusM_val) || josephusM_val <= 0) { addLog('【提示】报数必须为正整数'); return; }
     josephusCircle = [];
-    for(let i=1; i<=n; i++) josephusCircle.push(i);
+    for (let i = 1; i <= n; i++) josephusCircle.push(i);
     josephusIdx = 0;
+    josephusCreated = true;
     renderJosephus();
-    updateStep('stepInfo3', '约瑟夫环已创建: n='+n+'  m='+josephusM_val);
-    addLog('【操作】创建约瑟夫环，n='+n+'人，报数m='+josephusM_val);
+    updateStep('stepInfo3', '约瑟夫环已创建: n=' + n + '  m=' + josephusM_val);
+    addLog('【操作】创建约瑟夫环，n=' + n + '人，报数m=' + josephusM_val);
     addLog('环结构: ' + josephusCircle.join('→') + '→(回到开头)');
 }
-function renderJosephus() {
-    const view = document.getElementById('josephusView');
-    if(josephusCircle.length===0) { view.innerHTML='所有人员已出列'; return; }
-    let html = '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">';
-    josephusCircle.forEach(function(v,i) {
-        let cls = 'node';
-        if(i===josephusIdx) cls += ' highlight';
-        html += '<div class="'+cls+'"><div class="node-data">'+v+'</div></div>';
-        if(i<josephusCircle.length-1) html += '<span class="node-arrow">→</span>';
-    });
-    html += '</div>';
-    html += '<div style="margin-top:10px;color:#888">当前指针位置: 第'+(josephusIdx+1)+'个人</div>';
-    view.innerHTML = html;
-}
+
 function stepJosephus() {
-    if(josephusCircle.length===0) { addLog('【提示】所有人都已出列'); return; }
-    addLog('【操作】约瑟夫环出列一步: m='+josephusM_val);
+    if (!josephusCreated) {
+        addLog('【错误】请先点击"创建环"');
+        updateStep('stepInfo3', '请先点击"创建环"');
+        return;
+    }
+    if (josephusCircle.length === 0) { addLog('【提示】所有人都已出列'); return; }
+    addLog('【操作】约瑟夫环出列一步: m=' + josephusM_val);
     josephusIdx = (josephusIdx + josephusM_val - 1) % josephusCircle.length;
     const out = josephusCircle.splice(josephusIdx, 1)[0];
-    josephusIdx = josephusIdx % josephusCircle.length;
+    josephusIdx = josephusCircle.length > 0 ? josephusIdx % josephusCircle.length : 0;
     renderJosephus();
-    updateStep('stepInfo3', '第' + (8-josephusCircle.length+1) + '个出列: 编号 ' + out + '  剩余: ' + josephusCircle.join('→'));
+    updateStep('stepInfo3', '出列: 编号 ' + out + '  剩余人数: ' + josephusCircle.length);
     addLog('  出列: 编号 ' + out + '  剩余人数: ' + josephusCircle.length);
-    if(josephusCircle.length===0) {
+    if (josephusCircle.length === 0) {
         updateStep('stepInfo3', '约瑟夫环全部出列完毕!');
         addLog('【完成】所有人都已出列');
     }
 }
+
 function autoJosephus() {
-    if(josephusCircle.length===0) { addLog('【错误】请先创建环'); return; }
+    if (!josephusCreated) {
+        addLog('【错误】请先点击"创建环"');
+        updateStep('stepInfo3', '请先点击"创建环"');
+        return;
+    }
+    if (josephusCircle.length === 0) { addLog('【提示】环为空，请重新创建'); return; }
     addLog('【操作】自动运行约瑟夫环...');
     let step = 0;
     const interval = setInterval(function() {
-        if(josephusCircle.length===0) {
+        if (josephusCircle.length === 0) {
             clearInterval(interval);
             addLog('【完成】约瑟夫环运行完毕');
             return;
@@ -357,11 +591,19 @@ function autoJosephus() {
         const out = josephusCircle.splice(josephusIdx, 1)[0];
         josephusIdx = josephusCircle.length > 0 ? josephusIdx % josephusCircle.length : 0;
         renderJosephus();
-        updateStep('stepInfo3', '第'+step+'个出列: 编号'+out+'  剩余:'+josephusCircle.join('→'));
-        addLog('  第'+step+'个出列: 编号'+out);
+        updateStep('stepInfo3', '第' + step + '个出列: 编号' + out + '  剩余:' + josephusCircle.length + '人');
+        addLog('  第' + step + '个出列: 编号' + out);
     }, 800);
 }
-function clearList3() { josephusCircle=[]; renderJosephus(); updateStep('stepInfo3','约瑟夫环已清空'); }
+
+function clearList3() {
+    josephusCircle = [];
+    josephusIdx = 0;
+    josephusCreated = false;
+    document.getElementById('josephusView').innerHTML = '';
+    updateStep('stepInfo3', '约瑟夫环已清空');
+    addLog('【操作】清空约瑟夫环');
+}
 
 addLog('系统就绪。请选择操作标签页（就地逆置/有序合并/约瑟夫环）');
 </script>
