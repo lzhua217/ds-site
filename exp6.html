@@ -675,7 +675,6 @@ function* quickSortGen(a, low, high) {
 let compareData = [];
 let compareDataGenerated = false;
 
-/* 生成指定规模和类型的数据（首次点击“生成”按钮时调用） */
 function buildData(size, type) {
     let data = [];
     if (type === 'random') {
@@ -692,16 +691,6 @@ function getTypeName(type) {
     return {random:'随机', sorted:'正序', reverse:'逆序'}[type] || type;
 }
 
-/* Fisher-Yates 随机洗牌（就地） */
-function shuffleInPlace(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
-}
-
-/* 生成按钮：按“数据规模”和“数据类型”重新生成一份新数据 */
 function generateCompareData() {
     const size = parseInt(document.getElementById('dataSize').value);
     const type = document.getElementById('dataType').value;
@@ -712,31 +701,10 @@ function generateCompareData() {
     document.getElementById('compareResult').innerHTML = '';
 }
 
-/* 数据类型切换：对“当前状态”中已显示的数据进行重排，并刷新显示 */
 function onDataTypeChange() {
-    const type = document.getElementById('dataType').value;
-
-    // 尚未生成数据：仅提示，不自动生成
-    if (!compareDataGenerated || compareData.length === 0) {
-        document.getElementById('compareStepInfo').innerHTML =
-            '<strong>当前状态：</strong>请先点击“生成”按钮生成数据';
-        document.getElementById('compareResult').innerHTML = '';
-        return;
+    if (compareDataGenerated) {
+        generateCompareData();
     }
-
-    // 对已有数据重排
-    if (type === 'random') {
-        shuffleInPlace(compareData);
-    } else if (type === 'sorted') {
-        compareData.sort(function(x, y){ return x - y; });
-    } else if (type === 'reverse') {
-        compareData.sort(function(x, y){ return y - x; });
-    }
-
-    // 刷新“当前状态”，并清除之前显示的对比结果
-    document.getElementById('compareStepInfo').innerHTML =
-        '<strong>当前状态：</strong>已重排 ' + compareData.length + ' 个数据（' + getTypeName(type) + '）：[' + compareData.join(', ') + ']';
-    document.getElementById('compareResult').innerHTML = '';
 }
 
 function runCompare() {
