@@ -16,7 +16,7 @@ body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-ser
 .nav-bar a:hover{background:#2980b9}
 .container{max-width:1200px;margin:0 auto;padding:30px 20px}
 .section-title{font-size:1.6em;color:#1a5276;border-left:5px solid #3498db;padding-left:15px;margin:35px 0 20px}
-.sub-title{font-size:1.3em;color:#2c3e50;margin:25px 0 12px;padding-left:10px;border-left:3px solid #1abc9c}
+.sub-title{font-size:1.15em;color:#2c3e50;margin:22px 0 10px;padding-left:10px;border-left:3px solid #1abc9c}
 .info-box{background:#eaf2f8;border-left:4px solid #3498db;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
 .ai-box{background:#f0f8e8;border-left:4px solid #1abc9c;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
 .trad-box{background:#fef9e7;border-left:4px solid #f39c12;padding:20px;border-radius:0 8px 8px 0;margin:15px 0}
@@ -26,6 +26,8 @@ body{font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',Arial,sans-ser
 tr:hover{background:#f5f5f5}
 .footer{text-align:center;padding:25px;color:#7f8c8d;font-size:0.9em;margin-top:30px}
 ul{padding-left:20px}li{margin-bottom:6px}
+
+/* ===== 可视化操作台 ===== */
 .viz-container{background:#fff;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);padding:25px;margin:20px 0}
 .viz-title{font-size:1.2em;color:#1a5276;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #eef2f7}
 .viz-controls{display:flex;gap:10px;margin:15px 0;flex-wrap:wrap}
@@ -35,50 +37,73 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .viz-btn.danger:hover{background:#c0392b}
 .viz-btn.success{background:#27ae60}
 .viz-btn.success:hover{background:#1e8449}
-.viz-btn.warning{background:#f39c12}
-.viz-btn.warning:hover{background:#d68910}
-.viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.viz-btn.purple{background:#9b59b6}
+.viz-btn.purple:hover{background:#7d3c98}
 .input-group{display:flex;gap:10px;margin:10px 0;align-items:center;flex-wrap:wrap}
 .input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
 .input-group label{font-weight:bold;color:#555}
-.step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
-.tab-bar{display:flex;gap:5px;margin-bottom:15px}
-.tab-btn{padding:8px 16px;background:#eef2f7;border:none;border-radius:6px 6px 0 0;cursor:pointer;font-size:0.95em;color:#555}
-.tab-btn.active{background:#3498db;color:#fff}
-.tab-content{display:none}
-.tab-content.active{display:block}
 .code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
-.code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
-.code-keyword{color:#9b59b6}
-.code-type{color:#3498db}
-.code-comment{color:#7f8c8d;font-style:italic}
-.code-string{color:#27ae60}
-.code-number{color:#e67e22}
-.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0}
+.log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:260px;overflow-y:auto}
 .log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
 .log-entry:last-child{border-bottom:none}
 .log-time{color:#666;margin-right:8px}
 
-/* 图可视化 */
-.graph-container{position:relative;width:100%;height:400px;background:#fafbfc;border:2px dashed #dce1e8;border-radius:8px;overflow:hidden}
-.graph-node{position:absolute;width:50px;height:50px;border-radius:50%;background:#3498db;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1em;border:3px solid #3498db;transform:translate(-50%,-50%);z-index:2;transition:all 0.3s}
-.graph-node.start{background:#27ae60;border-color:#27ae60;box-shadow:0 0 15px rgba(39,174,96,0.5)}
-.graph-node.end{background:#e74c3c;border-color:#e74c3c;box-shadow:0 0 15px rgba(231,76,60,0.5)}
-.graph-node.visited{background:#9b59b6;border-color:#9b59b6}
-.graph-node.current{background:#f1c40f;color:#2c3e50;border-color:#f39c12;box-shadow:0 0 15px rgba(241,196,15,0.5)}
-.graph-edge{position:absolute;height:2px;background:#bdc3c7;transform-origin:0 50%;z-index:1}
-.graph-edge.highlight{background:#e74c3c;height:3px}
-.graph-weight{position:absolute;background:#fff;padding:2px 6px;border-radius:10px;font-size:0.8em;font-weight:bold;color:#2c3e50;border:1px solid #ddd;z-index:3;transform:translate(-50%,-50%)}
-.graph-weight.highlight{background:#e74c3c;color:#fff}
+/* ===== 图可视化（与左侧执行步骤并排） ===== */
+.graph-with-steps{display:flex;gap:15px;align-items:flex-start;margin:15px 0}
+.graph-steps-panel{flex:0 0 360px;background:#1a1a2e;border-radius:8px;padding:12px;height:420px;overflow-y:auto;color:#a8d8a8;box-sizing:border-box}
+.graph-steps-title{color:#f39c12;font-weight:bold;font-size:0.92em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #2a2a4e;position:sticky;top:0;background:#1a1a2e;z-index:1}
+.graph-step-item{font-family:Consolas,monospace;font-size:0.82em;padding:5px 0;border-bottom:1px dashed #2a2a4e;line-height:1.5;color:#a8d8a8}
+.graph-step-item:last-child{border-bottom:none}
+.graph-step-item.init{color:#85c1e9}
+.graph-step-item.select{color:#f5b041;font-weight:bold}
+.graph-step-item.relax{color:#58d68d}
+.graph-step-item.result{color:#f1948a;font-weight:bold;background:#2a1a1e;padding:6px 8px;border-radius:4px;border-bottom:none;margin-top:4px}
+.graph-step-sub{display:block;color:#c8d6e5;font-size:0.92em;padding-left:10px;line-height:1.5}
 
-/* 距离表 */
+.graph-container{flex:1;min-width:0;position:relative;height:420px;background:#fafbfc;border:2px dashed #dce1e8;border-radius:8px;overflow:hidden}
+.graph-container .placeholder{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#95a5a6;text-align:center;font-size:0.95em}
+.g-edge{stroke:#b8c4d0;stroke-width:2.5;stroke-linecap:round;transition:stroke .25s,stroke-width .25s}
+.g-edge.highlight{stroke:#e74c3c;stroke-width:5}
+.g-edge.relax{stroke:#f39c12;stroke-width:5;stroke-dasharray:8,4;animation:relaxFlow 0.6s linear infinite}
+@keyframes relaxFlow{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+.g-weight{fill:#2c3e50;font-size:13px;font-weight:bold;stroke:#fafbfc;stroke-width:4;paint-order:stroke;pointer-events:none;font-family:Arial,sans-serif}
+.g-node{fill:#3498db;stroke:#2471a3;stroke-width:3;transition:fill .3s,stroke .3s}
+.g-node.visited{fill:#9b59b6;stroke:#7d3c98}
+.g-node.start{fill:#27ae60;stroke:#1e8449}
+.g-node.end{fill:#e74c3c;stroke:#c0392b}
+.g-node.current{fill:#f1c40f;stroke:#d68910}
+.g-node.path{fill:#e74c3c;stroke:#a93226;stroke-width:4}
+.g-label{fill:#fff;font-weight:bold;pointer-events:none;font-family:'Microsoft YaHei',Arial,sans-serif}
+
+@media (max-width: 900px){
+  .graph-with-steps{flex-direction:column}
+  .graph-steps-panel{flex:none;width:100%;height:240px}
+  .graph-container{width:100%;height:360px}
+}
+
+/* ===== 结果横幅 ===== */
+.result-banner{display:none;background:#eafaf1;border-left:5px solid #27ae60;padding:14px 18px;border-radius:0 8px 8px 0;margin:0 0 15px;font-size:1.02em;color:#1e8449;box-shadow:0 2px 10px rgba(39,174,96,.12)}
+.result-banner.warn{background:#fdedec;border-left-color:#e74c3c;color:#c0392b}
+
+/* ===== 邻接矩阵 & 距离表 ===== */
+.matrix-table{width:auto;border-collapse:collapse;margin:10px 0;font-size:0.95em}
+.matrix-table th,.matrix-table td{border:1px solid #cfd8e3;padding:7px 16px;text-align:center;min-width:56px}
+.matrix-table th{background:#3498db;color:#fff;font-weight:bold}
+.matrix-table td.inf{color:#c0c8d2}
+.matrix-table tr.row-hl td{background:#fff3cd;font-weight:bold;color:#b9770e}
+.matrix-table tr.row-hl th{background:#f39c12}
 .dist-table{width:100%;border-collapse:collapse;margin:15px 0}
 .dist-table th,.dist-table td{padding:8px 12px;text-align:center;border:1px solid #ddd}
-.dist-table th{background:#3498db;color:#fff}
+.dist-table th{background:#3498db;color:#fff;font-size:0.9em}
 .dist-table tr:hover{background:#f5f5f5}
-.dist-table .s-set{background:#d5f5e3}
-.dist-table .current-row{background:#fff3cd}
-.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+.dist-table .s-set{background:#d5f5e3;font-weight:bold;color:#1e8449}
+.matrix-wrap{overflow-x:auto}
+
+/* 自定义图输入 */
+.custom-area{background:#f4f7fb;border:2px dashed #b8c4d0;border-radius:8px;padding:15px;margin:15px 0}
+.custom-area .hint{color:#7f8c8d;font-size:0.88em;margin-bottom:8px}
+</style>
 </head>
 <body>
 <div class="header"><h1>实验五：最短路径</h1><p>AI旅游景点导游模拟系统 · 虚拟仿真实验教学</p></div>
@@ -87,12 +112,17 @@ ul{padding-left:20px}li{margin-bottom:6px}
 <a href="exp3.html">实验三 栈</a><a href="exp4.html">实验四 二叉树</a><a href="exp5.html">实验五 最短路径</a>
 <a href="exp6.html">实验六 内部排序</a><a href="prompts.html">AI提示词</a>
 </div></div>
+
 <div class="container">
 <h2 class="section-title">一、实验基本信息</h2>
-<table class="table"><tr><th>项目</th><th>内容</th></tr>
+<table class="table">
+<tr><th>项目</th><th>内容</th></tr>
 <tr><td>实验名称</td><td>最短路径 —— AI旅游景点导游模拟系统</td></tr>
-<tr><td>课程名称</td><td>数据结构</td></tr><tr><td>专业方向</td><td>计算机科学与技术</td></tr>
-<tr><td>实验学时</td><td>3学时</td></tr><tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr></table>
+<tr><td>课程名称</td><td>数据结构</td></tr>
+<tr><td>专业方向</td><td>计算机科学与技术</td></tr>
+<tr><td>实验学时</td><td>3学时</td></tr>
+<tr><td>实验环境</td><td>AI+虚拟仿真实验平台（Web端）</td></tr>
+</table>
 
 <h2 class="section-title">二、传统实验内容</h2>
 <div class="trad-box"><h3>原始实验要求</h3>
@@ -102,49 +132,87 @@ ul{padding-left:20px}li{margin-bottom:6px}
 
 <h2 class="section-title">三、AI+增强实验设计</h2>
 <div class="ai-box"><h3>人工智能融合方案</h3>
-<p>最短路径问题是图论的经典应用。通过AI增强的导游模拟系统，将抽象的图算法与真实的旅游场景结合，让学生在趣味化的情境中掌握Dijkstra算法。Dijkstra算法可视化执行引擎逐步展示算法的每一步执行过程。</p></div>
+<p>最短路径问题是图论的经典应用。通过AI增强的导游模拟系统，将抽象的图算法与真实的旅游场景结合，让学生在趣味化的情境中掌握Dijkstra算法。Dijkstra算法可视化执行引擎逐步展示算法的每一步执行过程，并把最终路线在地图上高亮标红。</p></div>
 
 <h2 class="section-title">四、可视化实验操作台</h2>
 <div class="viz-container">
 <div class="viz-title">Dijkstra最短路径算法可视化</div>
+
 <div class="input-group">
 <label>起点:</label>
-<select id="startNode"><option value="0">A(北京)</option><option value="1">B(上海)</option><option value="2">C(广州)</option><option value="3">D(成都)</option><option value="4">E(武汉)</option></select>
+<select id="startNode"></select>
 <label>终点:</label>
-<select id="endNode"><option value="4">E(武汉)</option><option value="0">A(北京)</option><option value="1">B(上海)</option><option value="2">C(广州)</option><option value="3">D(成都)</option></select>
+<select id="endNode"></select>
 <button class="viz-btn success" onclick="runDijkstra()">运行Dijkstra算法</button>
-<button class="viz-btn" onclick="stepDijkstra()" style="background:#9b59b6">逐步执行</button>
-<button class="viz-btn" onclick="loadMap()" style="background:#27ae60">加载地图</button>
+<button class="viz-btn purple" onclick="stepDijkstra()">逐步执行</button>
+<button class="viz-btn" style="background:#16a085" onclick="loadMap()">加载地图</button>
+<button class="viz-btn danger" onclick="resetAll()">重置</button>
 </div>
 
-<div class="graph-container" id="graphView">
-<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#95a5a6">请点击"加载地图"显示旅游景点图</div>
+<div id="resultBanner" class="result-banner"></div>
+
+<!-- 左侧同步执行步骤 + 右侧可视化图 -->
+<div class="graph-with-steps">
+  <div class="graph-steps-panel">
+    <div class="graph-steps-title">📋 执行步骤（与右侧图同步）</div>
+    <div id="graphStepLog"></div>
+  </div>
+  <div class="graph-container" id="graphView">
+    <div class="placeholder">请点击"加载地图"显示旅游景点图</div>
+  </div>
 </div>
 
-<div style="margin-top:15px"><strong>Dijkstra距离表:</strong></div>
-<table class="dist-table" id="distTable">
-<tr><th>顶点</th><th>A(北京)</th><th>B(上海)</th><th>C(广州)</th><th>D(成都)</th><th>E(武汉)</th></tr>
-<tr><td>距离dist[]</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-<tr><td>前驱path[]</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-<tr><td>S集合</td><td>否</td><td>否</td><td>否</td><td>否</td><td>否</td></tr>
-</table>
+<div class="custom-area">
+  <div class="hint">💡 自定义构造图（顶点名称用字母或简短中文，2~8 个；边每行一条，格式：起点,终点,权重，例如 A,B,12）</div>
+  <div class="input-group">
+    <label>顶点:</label>
+    <input type="text" id="customVerts" value="A,B,C,D,E" style="width:280px">
+  </div>
+  <div class="input-group" style="align-items:flex-start">
+    <label style="margin-top:8px;flex-shrink:0">边:</label>
+    <textarea id="customEdges" style="width:360px;height:130px;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-family:Consolas,monospace;font-size:0.9em;line-height:1.6;resize:vertical">A,B,12
+A,D,15
+A,E,10
+B,C,14
+B,E,8
+C,D,18
+C,E,16</textarea>
+  </div>
+  <div class="input-group">
+    <button class="viz-btn purple" onclick="applyCustomGraph()">应用自定义图</button>
+    <button class="viz-btn" style="background:#16a085" onclick="useDefaultGraph()">恢复默认地图</button>
+  </div>
+</div>
 
+<div class="sub-title">邻接矩阵</div>
+<div class="matrix-wrap" id="matrixView">
+  <div style="color:#95a5a6;font-size:0.92em;padding:6px 0">尚未加载</div>
+</div>
+
+<div class="sub-title">Dijkstra距离表</div>
+<div class="matrix-wrap">
+  <table class="dist-table" id="distTable"></table>
+</div>
+
+<div class="sub-title">执行日志</div>
+<div class="log-container" id="logArea"></div>
+
+<div class="sub-title">Dijkstra算法核心代码</div>
 <div class="code-container">
-<div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// Dijkstra算法代码</div>
-<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 求顶点v0到其余顶点的最短路径
+<textarea class="code-textarea" readonly>// 求顶点v0到其余顶点的最短路径
 void ShortestPath_DJ(Graph G, int v0) {
     int v, w, i, j, min;
     int final[MAX];     // final[w]=1表示求得最短路径
     int D[MAX];         // D[w]表示当前最短路径长度
     int path[MAX];      // path[w]表示前驱顶点
-    
+
     for(v=0; v<G.vexnum; v++) {
         final[v] = 0; D[v] = G.arcs[v0][v];
         if(D[v] < INFINITY) path[v] = v0;
         else path[v] = -1;
     }
     D[v0] = 0; final[v0] = 1;
-    
+
     for(i=1; i<G.vexnum; i++) {
         min = INFINITY;
         for(w=0; w<G.vexnum; w++)
@@ -161,189 +229,698 @@ void ShortestPath_DJ(Graph G, int v0) {
 </div>
 
 <h2 class="section-title">五、实验报告要求</h2>
-<div class="info-box"><p>1. 实验题目与实验目的</p><p>2. 实验环境</p><p>3. 实验内容与完成情况（附上源程序及算法执行过程截图）</p><p>4. 出现的问题及AI辅助解决方案</p><p>5. 实验思考：Dijkstra算法的适用范围与局限性</p></div>
+<div class="info-box">
+<p>1. 实验题目与实验目的</p>
+<p>2. 实验环境</p>
+<p>3. 实验内容与完成情况（附上源程序及算法执行过程截图）</p>
+<p>4. 出现的问题及AI辅助解决方案</p>
+<p>5. 实验思考：Dijkstra算法的适用范围与局限性</p>
 </div>
+</div>
+
 <div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
 
 <script>
-// 图数据 - 5个城市
-const cities = ['A(北京)','B(上海)','C(广州)','D(成都)','E(武汉)'];
-const cityShort = ['A','B','C','D','E'];
-// 邻接矩阵 (INF=9999)
+/* ==================== 全局状态（图可动态重建） ==================== */
 const INF = 9999;
-let adjMatrix = [
-    [0, 12, 9999, 15, 10],
-    [12, 0, 14, 9999, 8],
-    [9999, 14, 0, 18, 16],
-    [15, 9999, 18, 0, 9999],
-    [10, 8, 16, 9999, 0]
+
+/* 默认图（5 城市） */
+const DEFAULT_VERTICES = ['A(北京)','B(上海)','C(广州)','D(成都)','E(武汉)'];
+const DEFAULT_SHORT    = ['A','B','C','D','E'];
+const DEFAULT_MATRIX = [
+  [0,   12,  INF, 15,  10 ],
+  [12,  0,   14,  INF, 8  ],
+  [INF, 14,  0,   18,  16 ],
+  [15,  INF, 18,  0,   INF],
+  [10,  8,   16,  INF, 0  ]
 ];
-// 城市节点位置 (百分比)
-const nodePositions = [
-    {x:20, y:20}, {x:80, y:20}, {x:80, y:80}, {x:20, y:80}, {x:50, y:50}
-];
-// 边和权重
-const edges = [
-    [0,1,12],[0,4,10],[1,4,8],[1,2,14],[2,3,18],[0,3,15]
+const DEFAULT_POSITIONS = [
+  {x:16, y:20},  // A
+  {x:84, y:20},  // B
+  {x:84, y:80},  // C
+  {x:16, y:80},  // D
+  {x:50, y:50}   // E
 ];
 
-let dijkstraState = null;
-let stepMode = false;
-let currentStep = 0;
-let steps = [];
+/* 当前图数据 */
+let nodeCount       = 5;
+let cityFullNames   = DEFAULT_VERTICES.slice();
+let cityShortNames  = DEFAULT_SHORT.slice();
+let adjMatrix       = DEFAULT_MATRIX.map(r => r.slice());
+let nodePositions   = DEFAULT_POSITIONS.map(p => ({x: p.x, y: p.y}));
+let edges           = [];   // [ [i, j, w], ... ]
 
-function loadMap() {
-    const view = document.getElementById('graphView');
-    let html = '';
-    
-    // 画边
-    edges.forEach(function(e) {
-        let from = nodePositions[e[0]];
-        let to = nodePositions[e[1]];
-        let weight = e[2];
-        
-        // 计算边的角度和位置
-        let dx = to.x - from.x;
-        let dy = to.y - from.y;
-        let len = Math.sqrt(dx*dx + dy*dy);
-        let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        
-        // 缩短边避免覆盖节点
-        let startX = from.x + (dx/len)*3;
-        let startY = from.y + (dy/len)*3;
-        let endX = to.x - (dx/len)*3;
-        let endY = to.y - (dy/len)*3;
-        
-        html += '<div class="graph-edge" style="' +
-            'left:' + startX + '%;top:' + startY + '%;' +
-            'width:' + Math.sqrt((endX-startX)**2+(endY-startY)**2) + '%;' +
-            'transform:rotate(' + angle + 'deg);' +
-            '"></div>';
-        
-        // 权重标签位置
-        let midX = (from.x + to.x) / 2;
-        let midY = (from.y + to.y) / 2;
-        html += '<div class="graph-weight" style="left:' + midX + '%;top:' + (midY-3) + '%">' + weight + '</div>';
-    });
-    
-    // 画节点
-    nodePositions.forEach(function(pos, i) {
-        html += '<div class="graph-node" id="node-' + i + '" style="left:' + pos.x + '%;top:' + pos.y + '%">' + cityShort[i] + '</div>';
-    });
-    
-    view.innerHTML = html;
-    addLog('【操作】加载旅游景点地图: ' + cities.join(', '));
-    addLog('【图结构】已构建含5个顶点、6条边的无向带权图');
+/* 运行期状态 */
+let animState    = null;
+let lastState    = null;
+let lastRoute    = null;
+
+/* ==================== 边推导 ==================== */
+function rebuildEdges() {
+  edges = [];
+  for (let i = 0; i < nodeCount; i++)
+    for (let j = i + 1; j < nodeCount; j++)
+      if (adjMatrix[i][j] < INF) edges.push([i, j, adjMatrix[i][j]]);
+}
+rebuildEdges();
+
+/* ==================== 左侧执行步骤面板 ==================== */
+function clearGraphStepLog() {
+  const log = document.getElementById('graphStepLog');
+  if (log) log.innerHTML = '';
 }
 
-function runDijkstra() {
-    if(!document.getElementById('node-0')) { loadMap(); }
-    const start = parseInt(document.getElementById('startNode').value);
-    const end = parseInt(document.getElementById('endNode').value);
-    
-    // 执行Dijkstra算法并记录步骤
-    steps = [];
-    const n = 5;
-    const final = new Array(n).fill(false);
-    const D = adjMatrix[start].slice();
-    const path = new Array(n).fill(-1);
-    
-    D[start] = 0;
-    steps.push({type:'init', D:D.slice(), final:final.slice(), path:path.slice(), current:-1});
-    
-    for(let i=1; i<n; i++) {
-        let min = INF, v = -1;
-        for(let w=0; w<n; w++) {
-            if(!final[w] && D[w]<min) { v=w; min=D[w]; }
-        }
-        if(v === -1) break;
-        final[v] = true;
-        
-        steps.push({type:'select', D:D.slice(), final:final.slice(), path:path.slice(), current:v});
-        
-        for(let w=0; w<n; w++) {
-            if(!final[w] && adjMatrix[v][w]<INF && D[v]+adjMatrix[v][w]<D[w]) {
-                D[w] = D[v] + adjMatrix[v][w];
-                path[w] = v;
-            }
-        }
-        steps.push({type:'update', D:D.slice(), final:final.slice(), path:path.slice(), current:v});
+function appendGraphStep(html, cls) {
+  const log = document.getElementById('graphStepLog');
+  if (!log) return;
+  const item = document.createElement('div');
+  item.className = 'graph-step-item ' + (cls || '');
+  item.innerHTML = html;
+  log.appendChild(item);
+  log.scrollTop = log.scrollHeight;
+}
+
+/* 把一个算法 step 渲染为左侧面板中的一段文字 */
+function renderGraphStep(step, idx, start) {
+  if (!step) return;
+  if (step.type === 'init') {
+    let s = '【初始化】<br>';
+    s += 'S = { ' + cityShortNames[start] + ' }<br>';
+    let parts = [];
+    for (let i = 0; i < nodeCount; i++) {
+      parts.push(cityShortNames[i] + ':' + (step.D[i] >= INF ? '∞' : step.D[i]));
     }
-    
-    currentStep = 0;
-    stepMode = false;
-    showStep();
-    
-    // 输出路径
-    let route = [];
-    let p = end;
-    while(p !== -1) { route.unshift(cityShort[p]); p = path[p]; }
-    
-    addLog('【操作】Dijkstra算法: 起点=' + cityShort[start] + ' 终点=' + cityShort[end]);
-    addLog('【结果】最短路径: ' + route.join('→') + '  距离: ' + D[end]);
-}
-
-function stepDijkstra() {
-    if(steps.length === 0) { runDijkstra(); }
-    if(currentStep < steps.length) {
-        showStep();
-        currentStep++;
+    s += 'D = { ' + parts.join(', ') + ' }';
+    appendGraphStep(s, 'init');
+  } else if (step.type === 'select') {
+    const v = step.current;
+    let s = '【第' + idx + '步·选择】<br>';
+    s += '在 V-S 中选 D 最小的顶点：<strong>' + cityFullNames[v] + '</strong>（D=' + step.D[v] + '）<br>';
+    let inS = [];
+    for (let i = 0; i < nodeCount; i++) if (step.final[i]) inS.push(cityShortNames[i]);
+    s += '加入 S 后：S = { ' + inS.join(', ') + ' }';
+    appendGraphStep(s, 'select');
+  } else if (step.type === 'update') {
+    const v = step.current;
+    let s = '【第' + idx + '步·松弛】以 <strong>' + cityFullNames[v] + '</strong> 为中转：';
+    if (step.relaxEdges && step.relaxEdges.length > 0) {
+      step.relaxEdges.forEach(function (re) {
+        s += '<span class="graph-step-sub">' + cityShortNames[re[0]] + '→' + cityShortNames[re[1]]
+          + '：更新 D[' + cityShortNames[re[1]] + '] = ' + re[2]
+          + '，path[' + cityShortNames[re[1]] + '] = ' + cityShortNames[re[0]] + '</span>';
+      });
     } else {
-        addLog('【完成】算法执行完毕');
+      s += '<span class="graph-step-sub">无可更新的顶点距离</span>';
     }
+    appendGraphStep(s, 'relax');
+  }
 }
 
-function showStep() {
-    const step = steps[currentStep];
-    // 更新节点样式
-    nodePositions.forEach(function(_, i) {
-        const el = document.getElementById('node-' + i);
-        el.className = 'graph-node';
-        if(step.final[i]) el.classList.add('visited');
-        if(step.current === i) el.classList.add('current');
-    });
-    
-    // 更新距离表
-    const table = document.getElementById('distTable');
-    const distRow = table.rows[1];
-    const pathRow = table.rows[2];
-    const sRow = table.rows[3];
-    
-    step.D.forEach(function(d, i) {
-        distRow.cells[i+1].textContent = d === INF ? '∞' : d;
-        pathRow.cells[i+1].textContent = step.path[i] === -1 ? '-' : cityShort[step.path[i]];
-        sRow.cells[i+1].textContent = step.final[i] ? '是' : '否';
-        
-        if(step.final[i]) {
-            distRow.cells[i+1].classList.add('s-set');
-            sRow.cells[i+1].classList.add('s-set');
-        } else {
-            distRow.cells[i+1].classList.remove('s-set');
-            sRow.cells[i+1].classList.remove('s-set');
-        }
-    });
-    
-    const typeNames = {init:'初始化', select:'选择顶点', update:'更新距离'};
-    addLog('【步骤' + currentStep + '】' + (typeNames[step.type]||'') + ': 当前顶点=' + (step.current>=0?cityShort[step.current]:'无'));
+/* ==================== 初始化下拉框 & 距离表结构 ==================== */
+function updateSelectors() {
+  const selStart = document.getElementById('startNode');
+  const selEnd   = document.getElementById('endNode');
+  selStart.innerHTML = '';
+  selEnd.innerHTML = '';
+  for (let i = 0; i < nodeCount; i++) {
+    selStart.add(new Option(cityFullNames[i], i));
+    selEnd.add(new Option(cityFullNames[i], i));
+  }
+  selStart.value = '0';
+  selEnd.value   = String(nodeCount - 1);
+  selStart.onchange = onStartChange;
+  selEnd.onchange   = onEndChange;
 }
 
+function renderDistTableStructure() {
+  const table = document.getElementById('distTable');
+  let html = '<thead><tr><th>顶点</th>';
+  for (let i = 0; i < nodeCount; i++) html += '<th>' + cityFullNames[i] + '</th>';
+  html += '</tr></thead><tbody>';
+  html += '<tr><td>距离dist[]</td>';
+  for (let i = 0; i < nodeCount; i++) html += '<td>-</td>';
+  html += '</tr><tr><td>前驱path[]</td>';
+  for (let i = 0; i < nodeCount; i++) html += '<td>-</td>';
+  html += '</tr><tr><td>S集合</td>';
+  for (let i = 0; i < nodeCount; i++) html += '<td>否</td>';
+  html += '</tr></tbody>';
+  table.innerHTML = html;
+}
+
+/* 初始化 */
+updateSelectors();
+renderDistTableStructure();
+addLog('系统就绪。请点击"加载地图"显示图，然后运行 Dijkstra 算法。');
+
+/* ==================== 图形渲染 ==================== */
+function renderGraph() {
+  const view = document.getElementById('graphView');
+  const W = view.clientWidth  || 900;
+  const H = view.clientHeight || 420;
+  const R = nodeCount <= 6 ? 24 : 20;
+  const GAP = R + 3;
+
+  const px = function (i) { return nodePositions[i].x / 100 * W; };
+  const py = function (i) { return nodePositions[i].y / 100 * H; };
+
+  let svg = '<svg id="graphSvg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H +
+            '" style="position:absolute;left:0;top:0;display:block">';
+
+  edges.forEach(function (e) {
+    const a = e[0], b = e[1], w = e[2];
+    const x1 = px(a), y1 = py(a), x2 = px(b), y2 = py(b);
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const ux = dx / len, uy = dy / len;
+    const sx = x1 + ux * GAP, sy = y1 + uy * GAP;
+    const ex = x2 - ux * GAP, ey = y2 - uy * GAP;
+
+    const id = 'edge-' + Math.min(a, b) + '-' + Math.max(a, b);
+    svg += '<line id="' + id + '" class="g-edge" x1="' + sx + '" y1="' + sy +
+           '" x2="' + ex + '" y2="' + ey + '"/>';
+
+    const mx = (sx + ex) / 2 + (-uy) * 15;
+    const my = (sy + ey) / 2 + ( ux) * 15;
+    svg += '<text class="g-weight" x="' + mx + '" y="' + my +
+           '" text-anchor="middle" dominant-baseline="central">' + w + '</text>';
+  });
+
+  const fontSize = nodeCount <= 6 ? 16 : 13;
+  for (let i = 0; i < nodeCount; i++) {
+    const cx = px(i), cy = py(i);
+    svg += '<circle id="node-' + i + '" class="g-node" cx="' + cx + '" cy="' + cy + '" r="' + R + '"/>';
+    svg += '<text class="g-label" x="' + cx + '" y="' + cy +
+           '" text-anchor="middle" dominant-baseline="central" font-size="' + fontSize + '">' +
+           cityShortNames[i] + '</text>';
+  }
+  svg += '</svg>';
+  view.innerHTML = svg;
+}
+
+/* ==================== 节点配色 ==================== */
+function updateNodeClasses(state) {
+  const start = parseInt(document.getElementById('startNode').value, 10);
+  const end   = parseInt(document.getElementById('endNode').value, 10);
+  for (let i = 0; i < nodeCount; i++) {
+    const el = document.getElementById('node-' + i);
+    if (!el) continue;
+    let cls = 'g-node';
+    if (state && state.final && state.final[i]) cls += ' visited';
+    if (i === start) cls += ' start';
+    if (i === end)   cls += ' end';
+    if (state && state.current === i) cls += ' current';
+    if (state && state.pathSet && state.pathSet.indexOf(i) >= 0) cls += ' path';
+    el.setAttribute('class', cls);
+  }
+}
+
+/* ==================== 邻接矩阵 ==================== */
+function renderMatrix() {
+  const start = parseInt(document.getElementById('startNode').value, 10);
+  const box = document.getElementById('matrixView');
+  let html = '<table class="matrix-table"><tr><th></th>';
+  for (let j = 0; j < nodeCount; j++) html += '<th>' + cityShortNames[j] + '</th>';
+  html += '</tr>';
+  for (let i = 0; i < nodeCount; i++) {
+    const hl = (i === start) ? ' class="row-hl"' : '';
+    html += '<tr' + hl + '><th>' + cityShortNames[i] + '</th>';
+    for (let j = 0; j < nodeCount; j++) {
+      const v = adjMatrix[i][j];
+      html += '<td' + (v >= INF ? ' class="inf"' : '') + '>' + (v >= INF ? '∞' : v) + '</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</table>';
+  box.innerHTML = html;
+}
+
+/* ==================== 距离表 ==================== */
+function resetDistTable() {
+  const table = document.getElementById('distTable');
+  const tbody = table.querySelector('tbody');
+  if (!tbody) return;
+  const distRow = tbody.rows[0];
+  const pathRow = tbody.rows[1];
+  const sRow    = tbody.rows[2];
+  for (let i = 0; i < nodeCount; i++) {
+    distRow.cells[i + 1].textContent = '-';
+    pathRow.cells[i + 1].textContent = '-';
+    sRow.cells[i + 1].textContent    = '否';
+    distRow.cells[i + 1].classList.remove('s-set');
+    sRow.cells[i + 1].classList.remove('s-set');
+  }
+}
+
+function initialState(start) {
+  const n = nodeCount;
+  const D = adjMatrix[start].slice();
+  D[start] = 0;
+  const path = new Array(n).fill(-1);
+  for (let i = 0; i < n; i++) {
+    if (i !== start && adjMatrix[start][i] < INF) path[i] = start;
+  }
+  const final = new Array(n).fill(false);
+  final[start] = true;
+  return { D: D, path: path, final: final, current: -1 };
+}
+
+function renderDistTable(state) {
+  const table = document.getElementById('distTable');
+  const tbody = table.querySelector('tbody');
+  if (!tbody || !state) return;
+  const distRow = tbody.rows[0];
+  const pathRow = tbody.rows[1];
+  const sRow    = tbody.rows[2];
+  for (let i = 0; i < nodeCount; i++) {
+    const dCell = distRow.cells[i + 1];
+    const pCell = pathRow.cells[i + 1];
+    const sCell = sRow.cells[i + 1];
+    dCell.textContent = (state.D[i] >= INF) ? '∞' : state.D[i];
+    pCell.textContent = (state.path[i] === -1) ? '-' : cityShortNames[state.path[i]];
+    sCell.textContent = state.final[i] ? '是' : '否';
+    const inS = !!state.final[i];
+    dCell.classList.toggle('s-set', inS);
+    sCell.classList.toggle('s-set', inS);
+  }
+}
+
+/* ==================== 应用状态到界面 ==================== */
+function applyState(state) {
+  lastState = state;
+  updateNodeClasses(state);
+  renderDistTable(state);
+  clearRelaxHighlights();
+  if (state && state.relaxEdges && state.relaxEdges.length) {
+    state.relaxEdges.forEach(function (re) {
+      const a = Math.min(re[0], re[1]), b = Math.max(re[0], re[1]);
+      const el = document.getElementById('edge-' + a + '-' + b);
+      if (el) el.classList.add('relax');
+    });
+  }
+}
+
+/* ==================== 加载地图 ==================== */
+function loadMap() {
+  renderGraph();
+  renderMatrix();
+  resetAnimState();
+  const start = parseInt(document.getElementById('startNode').value, 10);
+  const initState = initialState(start);
+  applyState(initState);
+  renderGraphStep(initState, 0, start);
+  addLog('【操作】加载地图：' + cityFullNames.join('、'));
+  addLog('【图结构】共 ' + nodeCount + ' 个顶点、' + edges.length + ' 条无向边；邻接矩阵已显示在下方');
+  addLog('【提示】距离表已复制起点 ' + cityFullNames[start] + ' 在邻接矩阵中的整行数据');
+}
+
+/* ==================== 起终点切换 ==================== */
+function onStartChange() {
+  const start = parseInt(document.getElementById('startNode').value, 10);
+  resetAnimState();
+  const initState = initialState(start);
+  applyState(initState);
+  renderGraphStep(initState, 0, start);
+  if (document.getElementById('node-0')) renderMatrix();
+  addLog('【操作】起点设为 ' + cityFullNames[start] + '，距离表已重置为邻接矩阵该顶点的行');
+}
+function onEndChange() {
+  const end = parseInt(document.getElementById('endNode').value, 10);
+  addLog('【操作】终点设为 ' + cityFullNames[end]);
+  if (document.getElementById('node-0') && lastState) updateNodeClasses(lastState);
+}
+
+/* ==================== 生成算法步骤 ==================== */
+function buildSteps(start) {
+  const n = nodeCount;
+  const final = new Array(n).fill(false);
+  const D     = adjMatrix[start].slice();
+  const path  = new Array(n).fill(-1);
+
+  D[start] = 0;
+  for (let i = 0; i < n; i++) {
+    if (i !== start && adjMatrix[start][i] < INF) path[i] = start;
+  }
+  final[start] = true;
+
+  const steps = [{
+    type: 'init', D: D.slice(), final: final.slice(), path: path.slice(), current: -1
+  }];
+
+  for (let k = 1; k < n; k++) {
+    let min = INF, v = -1;
+    for (let w = 0; w < n; w++) {
+      if (!final[w] && D[w] < min) { v = w; min = D[w]; }
+    }
+    if (v === -1) break;
+
+    final[v] = true;
+    steps.push({
+      type: 'select', D: D.slice(), final: final.slice(), path: path.slice(), current: v
+    });
+
+    const relaxEdges = [];
+    for (let w = 0; w < n; w++) {
+      if (!final[w] && adjMatrix[v][w] < INF && D[v] + adjMatrix[v][w] < D[w]) {
+        relaxEdges.push([v, w, D[v] + adjMatrix[v][w]]);
+        D[w] = D[v] + adjMatrix[v][w];
+        path[w] = v;
+      }
+    }
+    steps.push({
+      type: 'update', D: D.slice(), final: final.slice(), path: path.slice(),
+      current: v, relaxEdges: relaxEdges
+    });
+  }
+  return steps;
+}
+
+/* ==================== 日志（底部全局日志） ==================== */
+function logStep(step, idx, start) {
+  if (step.type === 'init') {
+    addLog('【步骤0·初始化】距离数组 D 初始化为起点 ' + cityFullNames[start] + ' 所在行；S = { ' + cityShortNames[start] + ' }');
+    let parts = [];
+    for (let i = 0; i < nodeCount; i++) {
+      if (i === start) parts.push(cityShortNames[i] + ':0');
+      else parts.push(cityShortNames[i] + ':' + (step.D[i] >= INF ? '∞' : step.D[i]));
+    }
+    addLog('  D = { ' + parts.join(', ') + ' }');
+  } else if (step.type === 'select') {
+    const v = step.current;
+    addLog('【步骤' + idx + '·选择】在未确定顶点中选出距离最小的 ' + cityFullNames[v] + '（D=' + step.D[v] + '），加入 S 集合');
+    let inS = [];
+    for (let i = 0; i < nodeCount; i++) if (step.final[i]) inS.push(cityShortNames[i]);
+    addLog('  当前 S = { ' + inS.join(', ') + ' }');
+  } else if (step.type === 'update') {
+    const v = step.current;
+    if (step.relaxEdges && step.relaxEdges.length > 0) {
+      addLog('【步骤' + idx + '·松弛】以 ' + cityFullNames[v] + ' 为中转，更新以下顶点距离：');
+      step.relaxEdges.forEach(function (re) {
+        addLog('  ' + cityShortNames[re[0]] + ' → ' + cityShortNames[re[1]] +
+               '：更短路径 ' + re[2] + '，更新 D[' + cityShortNames[re[1]] + ']=' + re[2] +
+               '，path[' + cityShortNames[re[1]] + ']=' + cityShortNames[re[0]]);
+      });
+    } else {
+      addLog('【步骤' + idx + '·松弛】以 ' + cityFullNames[v] + ' 为中转，没有可更新的顶点距离');
+    }
+  }
+}
+
+/* ==================== 自动运行（可视化逐步播放） ==================== */
+async function runDijkstra() {
+  if (!document.getElementById('node-0')) { loadMap(); return; }
+  if (animState && animState.playing) { addLog('算法正在自动运行中，请稍候...'); return; }
+
+  const start = parseInt(document.getElementById('startNode').value, 10);
+  const end   = parseInt(document.getElementById('endNode').value, 10);
+
+  if (!animState || animState.start !== start || animState.end !== end || animState.cur >= animState.steps.length) {
+    animState = { steps: buildSteps(start), start: start, end: end, cur: 0, playing: false, resultShown: false };
+    clearEdgeHighlights();
+    clearRelaxHighlights();
+    hideResult();
+    clearGraphStepLog();
+    addLog('▶ 开始自动运行 Dijkstra：起点=' + cityFullNames[start] + '，终点=' + cityFullNames[end]);
+  } else {
+    addLog('▶ 继续运行 Dijkstra 算法...');
+  }
+
+  animState.playing = true;
+
+  while (animState.cur < animState.steps.length) {
+    const idx  = animState.cur;
+    const step = animState.steps[idx];
+    applyState(step);
+    renderGraphStep(step, idx, start);
+    logStep(step, idx, start);
+
+    if (!animState.resultShown && step.final[end]) {
+      await sleep(500);
+      const final = animState.steps[animState.steps.length - 1];
+      applyState(final);
+      showResult(start, end, final);
+      animState.resultShown = true;
+      animState.cur = animState.steps.length;
+      break;
+    }
+
+    animState.cur++;
+    if (animState.cur < animState.steps.length) {
+      await sleep(900);
+    }
+  }
+
+  animState.playing = false;
+
+  if (!animState.resultShown) {
+    const final = animState.steps[animState.steps.length - 1];
+    applyState(final);
+    showResult(start, end, final);
+    animState.resultShown = true;
+  }
+}
+
+/* ==================== 逐步执行 ==================== */
+function stepDijkstra() {
+  if (!document.getElementById('node-0')) { loadMap(); return; }
+  if (animState && animState.playing) { addLog('自动运行中，请稍候或点击"重置"'); return; }
+
+  const start = parseInt(document.getElementById('startNode').value, 10);
+  const end   = parseInt(document.getElementById('endNode').value, 10);
+
+  if (!animState || animState.start !== start || animState.end !== end || animState.cur >= animState.steps.length) {
+    animState = { steps: buildSteps(start), start: start, end: end, cur: 0, playing: false, resultShown: false };
+    clearEdgeHighlights();
+    clearRelaxHighlights();
+    hideResult();
+    clearGraphStepLog();
+    addLog('▶ 开始逐步执行 Dijkstra：起点=' + cityFullNames[start] + '，终点=' + cityFullNames[end]);
+  }
+
+  if (animState.cur >= animState.steps.length) {
+    addLog('【提示】算法已执行完毕，如需重新演示请点击"重置"');
+    return;
+  }
+
+  const idx  = animState.cur;
+  const step = animState.steps[idx];
+  applyState(step);
+  renderGraphStep(step, idx, start);
+  logStep(step, idx, start);
+
+  if (!animState.resultShown && step.final[end]) {
+    const final = animState.steps[animState.steps.length - 1];
+    applyState(final);
+    showResult(start, end, final);
+    animState.resultShown = true;
+    animState.cur = animState.steps.length;
+    return;
+  }
+
+  animState.cur++;
+}
+
+/* ==================== 结果展示 ==================== */
+function getRoute(path, start, end) {
+  const route = [];
+  let p = end, guard = 0;
+  while (p !== -1 && guard++ < nodeCount + 5) {
+    route.unshift(p);
+    if (p === start) break;
+    p = path[p];
+  }
+  if (route[0] !== start) return null;
+  return route;
+}
+
+function showResult(start, end, state) {
+  const banner = document.getElementById('resultBanner');
+  clearRelaxHighlights();
+
+  if (start === end) {
+    banner.className = 'result-banner';
+    banner.innerHTML = '✅ <strong>起点和终点相同</strong>，路径为 ' + cityFullNames[start] + '，最短距离 = 0';
+    banner.style.display = 'block';
+    updateNodeClasses({ D: state.D, path: state.path, final: state.final, current: state.current, pathSet: [start] });
+    lastRoute = [start];
+    appendGraphStep('<strong>【结果】</strong>起点与终点相同，最短距离 = 0', 'result');
+    addLog('【结果】起点与终点相同，最短距离 = 0');
+    return;
+  }
+
+  if (state.D[end] >= INF || state.path[end] === -1) {
+    banner.className = 'result-banner warn';
+    banner.innerHTML = '⚠ 从 <strong>' + cityFullNames[start] + '</strong> 到 <strong>' +
+                       cityFullNames[end] + '</strong> 不存在可达路径';
+    banner.style.display = 'block';
+    appendGraphStep('<strong>【结果】</strong>' + cityFullNames[start] + ' → ' + cityFullNames[end] + ' 不可达', 'result');
+    addLog('【结果】' + cityFullNames[start] + ' → ' + cityFullNames[end] + ' 不可达');
+    return;
+  }
+
+  const route = getRoute(state.path, start, end);
+  if (!route) return;
+
+  const names = route.map(function (i) { return cityFullNames[i]; }).join(' → ');
+  banner.className = 'result-banner';
+  banner.innerHTML = '✅ <strong>起点到终点经过的所有节点：</strong>' + names +
+                     '　　<strong>最短距离：</strong>' + state.D[end];
+  banner.style.display = 'block';
+
+  lastRoute = route;
+  updateNodeClasses({
+    D: state.D, path: state.path, final: state.final,
+    current: state.current, pathSet: route
+  });
+  highlightPathEdges(route);
+  appendGraphStep('<strong>【最终结果】</strong>最短路径：' + names + '<br>最短距离 = ' + state.D[end], 'result');
+  addLog('【结果】最短路径：' + names + '；最短距离：' + state.D[end]);
+}
+
+function highlightPathEdges(route) {
+  clearEdgeHighlights();
+  clearRelaxHighlights();
+  for (let i = 0; i < route.length - 1; i++) {
+    const a = route[i], b = route[i + 1];
+    const el = document.getElementById('edge-' + Math.min(a, b) + '-' + Math.max(a, b));
+    if (el) el.classList.add('highlight');
+  }
+}
+function clearEdgeHighlights() {
+  document.querySelectorAll('.g-edge.highlight').forEach(el => el.classList.remove('highlight'));
+}
+function clearRelaxHighlights() {
+  document.querySelectorAll('.g-edge.relax').forEach(el => el.classList.remove('relax'));
+}
+function hideResult() {
+  const b = document.getElementById('resultBanner');
+  b.style.display = 'none';
+  b.innerHTML = '';
+}
+
+/* ==================== 重置 ==================== */
+function resetAnimState() {
+  animState  = null;
+  lastRoute  = null;
+  lastState  = null;
+  clearEdgeHighlights();
+  clearRelaxHighlights();
+  hideResult();
+  clearGraphStepLog();
+}
+
+function resetAll() {
+  resetAnimState();
+  resetDistTable();
+  updateNodeClasses(null);
+  addLog('【操作】已重置：Dijkstra 距离表恢复原始状态，路径高亮已清除');
+}
+
+/* ==================== 自定义图 & 恢复默认 ==================== */
+function computeCircularPositions(n) {
+  const positions = [];
+  const r = n <= 5 ? 32 : (n <= 6 ? 34 : 37);
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + i * 2 * Math.PI / n;
+    positions.push({
+      x: 50 + r * Math.cos(angle),
+      y: 50 + r * Math.sin(angle)
+    });
+  }
+  return positions;
+}
+
+function applyCustomGraph() {
+  const vertsStr = document.getElementById('customVerts').value.trim();
+  const edgesStr = document.getElementById('customEdges').value.trim();
+
+  if (!vertsStr) { alert('请输入顶点列表'); return; }
+
+  const names = vertsStr.split(/[,，\s]+/).map(function (s) { return s.trim(); }).filter(function (s) { return s; });
+  if (names.length < 2) { alert('至少需要 2 个顶点'); return; }
+  if (names.length > 8) { alert('顶点数不要超过 8 个'); return; }
+
+  const n = names.length;
+  const matrix = [];
+  for (let i = 0; i < n; i++) {
+    matrix.push(new Array(n).fill(INF));
+    matrix[i][i] = 0;
+  }
+
+  const lines = edgesStr.split(/\n+/).map(function (l) { return l.trim(); }).filter(function (l) { return l; });
+  for (let k = 0; k < lines.length; k++) {
+    const line = lines[k];
+    const parts = line.split(/[,，\s\-]+/).filter(function (p) { return p; });
+    if (parts.length !== 3) { alert('边格式错误（应为"起点,终点,权重"）：' + line); return; }
+    const a = names.indexOf(parts[0]);
+    const b = names.indexOf(parts[1]);
+    const w = parseInt(parts[2], 10);
+    if (a < 0 || b < 0) { alert('边中引用了未定义的顶点：' + line); return; }
+    if (isNaN(w) || w < 0) { alert('权重无效：' + line); return; }
+    matrix[a][b] = w;
+    matrix[b][a] = w;
+  }
+
+  nodeCount      = n;
+  cityShortNames = names.slice();
+  cityFullNames  = names.slice();
+  adjMatrix      = matrix;
+  nodePositions  = computeCircularPositions(n);
+  rebuildEdges();
+
+  updateSelectors();
+  renderDistTableStructure();
+  resetAll();
+  loadMap();
+
+  addLog('【操作】应用自定义图：' + n + ' 个顶点、' + lines.length + ' 条边');
+}
+
+function useDefaultGraph() {
+  nodeCount      = 5;
+  cityShortNames = DEFAULT_SHORT.slice();
+  cityFullNames  = DEFAULT_VERTICES.slice();
+  adjMatrix      = DEFAULT_MATRIX.map(function (r) { return r.slice(); });
+  nodePositions  = DEFAULT_POSITIONS.map(function (p) { return { x: p.x, y: p.y }; });
+  rebuildEdges();
+
+  updateSelectors();
+  renderDistTableStructure();
+  resetAll();
+  loadMap();
+
+  addLog('【操作】恢复默认地图（5 个城市）');
+}
+
+/* ==================== 日志 ==================== */
 function addLog(msg) {
-    const logArea = document.getElementById('logArea') || document.createElement('div');
-    if(!logArea.id) {
-        logArea.id = 'logArea';
-        logArea.className = 'log-container';
-        document.querySelector('.viz-container').appendChild(logArea);
-    }
-    const time = new Date().toLocaleTimeString();
-    const entry = document.createElement('div');
-    entry.className = 'log-entry';
-    entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + msg;
-    logArea.appendChild(entry);
-    logArea.scrollTop = logArea.scrollHeight;
+  const logArea = document.getElementById('logArea');
+  const time = new Date().toLocaleTimeString();
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.innerHTML = '<span class="log-time">[' + time + ']</span> ' + msg;
+  logArea.appendChild(entry);
+  logArea.scrollTop = logArea.scrollHeight;
 }
 
-// 初始化日志
-addLog('系统就绪。请点击"加载地图"显示旅游景点图，然后运行Dijkstra算法。');
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+/* ==================== 窗口缩放重绘 ==================== */
+let resizeTimer = null;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function () {
+    if (!document.getElementById('node-0')) return;
+    renderGraph();
+    if (lastState) updateNodeClasses(lastState);
+    if (lastRoute) highlightPathEdges(lastRoute);
+    if (lastState && lastState.relaxEdges) {
+      lastState.relaxEdges.forEach(function (re) {
+        const el = document.getElementById('edge-' + Math.min(re[0], re[1]) + '-' + Math.max(re[0], re[1]));
+        if (el) el.classList.add('relax');
+      });
+    }
+  }, 200);
+});
 </script>
 </body>
 </html>
