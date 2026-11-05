@@ -39,25 +39,79 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .viz-btn.warning{background:#f39c12}
 .viz-btn.warning:hover{background:#d68910}
 .viz-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.linked-list{display:flex;align-items:center;gap:0;padding:20px 10px;min-height:80px;flex-wrap:wrap}
-.node{display:inline-flex;align-items:center;background:#fff;border:2px solid #3498db;border-radius:8px;margin:5px;position:relative;transition:all 0.3s;box-shadow:0 2px 8px rgba(52,152,219,0.15)}
-.node.highlight{background:#fff3cd;border-color:#f39c12;box-shadow:0 0 15px rgba(243,156,18,0.4)}
-.node.new-node{animation:popIn 0.4s ease}
-.node.removing{animation:fadeOut 0.3s ease forwards}
-@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
-@keyframes fadeOut{0%{transform:scale(1);opacity:1}100%{transform:scale(0);opacity:0}}
-.node-data{padding:10px 15px;font-weight:bold;color:#2c3e50;min-width:60px;text-align:center}
-.node-arrow{padding:0 8px;color:#3498db;font-size:1.2em;font-weight:bold}
-.node-pointer{position:absolute;top:-8px;right:-8px;background:#e74c3c;color:#fff;font-size:0.7em;padding:2px 6px;border-radius:10px}
-.head-label{background:#1a5276;color:#fff;padding:5px 12px;border-radius:15px;font-size:0.85em;margin-right:10px;font-weight:bold}
-.null-pointer{color:#95a5a6;font-style:italic;padding:0 10px}
+
+/* ===== 链表可视化区域 ===== */
+#linkedListView{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:90px;padding:10px 4px}
+.head-label{background:#1a5276;color:#fff;padding:8px 14px;border-radius:8px;font-size:0.85em;font-weight:bold;box-shadow:0 2px 6px rgba(26,82,118,0.3);flex-shrink:0}
+.head-arrow{color:#3498db;font-size:1.3em;font-weight:bold;flex-shrink:0}
+.null-pointer{color:#95a5a6;font-style:italic;padding:0 8px;font-weight:bold}
+
+/* 结点：4 个数据单元格 + 1 个指针单元格 */
+.node{
+    display:inline-flex;align-items:stretch;
+    background:#fff;border:2px solid #3498db;border-radius:8px;
+    position:relative;
+    box-shadow:0 2px 8px rgba(52,152,219,0.15);
+    transition:all 0.3s;
+    flex-shrink:0;
+}
+.node.highlight{
+    border-color:#f39c12;
+    background:#fff3cd;
+    box-shadow:0 0 18px rgba(243,156,18,0.6);
+    transform:translateY(-3px);
+}
+.node.highlight .node-ptr{background:#fdebd0}
+.node.highlight .node-ptr.is-null{background:#fdebd0;color:#d68910}
+
+.node-cell{
+    display:flex;align-items:center;justify-content:center;
+    padding:10px 16px;
+    border-right:1px solid #c8d9e8;
+    min-width:56px;min-height:52px;
+    font-size:0.95em;font-weight:bold;color:#2c3e50;
+    white-space:nowrap;
+}
+.node-cell:empty::before{content:'\00A0'}
+
+/* 指针域 */
+.node-ptr{
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+    min-width:36px;
+    padding:0;
+    background:#eaf2f8;
+    border-radius:0 6px 6px 0;
+    font-size:1.2em;font-weight:bold;color:#3498db;
+}
+.node-ptr.is-null{color:#95a5a6;background:#f4f6f8}
+
+/* 非尾结点：用伪元素绘制超出矩形框的长箭头 */
+.node-ptr.is-link::before{
+    content:'';
+    position:absolute;
+    top:50%;left:6px;
+    width:30px;height:2px;
+    background:#3498db;
+    transform:translateY(-50%);
+    pointer-events:none;
+}
+.node-ptr.is-link::after{
+    content:'';
+    position:absolute;
+    top:50%;left:36px;
+    transform:translateY(-50%);
+    width:0;height:0;
+    border-left:8px solid #3498db;
+    border-top:4px solid transparent;
+    border-bottom:4px solid transparent;
+    pointer-events:none;
+}
+.node.highlight .node-ptr.is-link::before{background:#d68910}
+.node.highlight .node-ptr.is-link::after{border-left-color:#d68910}
+
 .code-container{background:#2c3e50;border-radius:8px;padding:20px;margin:15px 0;overflow-x:auto}
 .code-container pre{color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre-wrap}
-.code-keyword{color:#9b59b6}
-.code-type{color:#3498db}
-.code-comment{color:#7f8c8d;font-style:italic}
-.code-string{color:#27ae60}
-.code-number{color:#e67e22}
 .log-container{background:#1a1a2e;border-radius:8px;padding:15px;margin:15px 0;max-height:250px;overflow-y:auto}
 .log-entry{color:#a8d8a8;font-family:Consolas,monospace;font-size:0.85em;padding:3px 0;border-bottom:1px solid #2a2a4e}
 .log-entry:last-child{border-bottom:none}
@@ -66,7 +120,8 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .input-group input,.input-group select{padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.95em}
 .input-group label{font-weight:bold;color:#555}
 .step-indicator{background:#eef2f7;padding:10px 15px;border-radius:6px;margin:10px 0;font-size:0.95em;color:#2c3e50}
-.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}</style>
+.code-textarea{width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;}
+</style>
 </head>
 <body>
 <div class="header"><h1>实验一：单链表（一）</h1><p>AI辅助学生信息管理系统 · 虚拟仿真实验教学</p></div>
@@ -96,7 +151,7 @@ ul{padding-left:20px}li{margin-bottom:6px}
 <h2 class="section-title">四、可视化实验操作台</h2>
 <div class="viz-container">
 <div class="viz-title">链表动态可视化模拟器</div>
-<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>链表为空，请执行操作</div>
+<div class="step-indicator" id="stepInfo"><strong>当前状态：</strong>链表尚未创建，请点击"创建链表"</div>
 <div class="input-group">
 <label>学号:</label><input type="text" id="stuId" placeholder="如: 2024001" value="2024001">
 <label>姓名:</label><input type="text" id="stuName" placeholder="如: 张三" value="张三">
@@ -112,10 +167,11 @@ ul{padding-left:20px}li{margin-bottom:6px}
 <button class="viz-btn" onclick="clearList()" style="background:#95a5a6">清空链表</button>
 </div>
 <div class="viz-controls"><label>快速填充:</label><button class="viz-btn" onclick="quickFill()">添加5个示例学生</button></div>
-<div class="viz-area"><div id="linkedListView"><span class="head-label">HEAD</span><span class="null-pointer"> → NULL</span></div></div>
+<!-- 初始可视化区域为空 -->
+<div class="viz-area"><div id="linkedListView"></div></div>
 <div class="code-container">
 <div style="color:#f39c12;margin-bottom:10px;font-weight:bold">// 对应C语言代码实现</div>
-<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 定义学生结点结构体
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 定义学生结点结构体（4个数据域 + 1个指针域）
 typedef struct Student {
     char id[20];      // 学号
     char name[20];    // 姓名
@@ -147,10 +203,12 @@ void CreateList_R(LinkList L, char id[], char name[], int age, char sex[]) {
 <h2 class="section-title">五、实验报告要求</h2>
 <div class="info-box"><p>1. 实验题目与实验目的</p><p>2. 实验环境（AI+虚拟仿真平台）</p><p>3. 实验内容与完成情况（附上AI辅助生成的代码及修改说明）</p><p>4. 出现的问题及AI辅助解决方案</p><p>5. 实验思考：AI辅助编程对理解链表结构的帮助与局限</p></div>
 </div>
-<div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
+<div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真教学项目</p></div>
 
 <script>
 let linkList = [];
+let listCreated = false;
+
 function addLog(msg) {
     const logArea = document.getElementById('logArea');
     const time = new Date().toLocaleTimeString();
@@ -160,39 +218,95 @@ function addLog(msg) {
     logArea.appendChild(entry);
     logArea.scrollTop = logArea.scrollHeight;
 }
+
 function updateStepInfo(msg) {
     document.getElementById('stepInfo').innerHTML = '<strong>当前状态：</strong>' + msg;
 }
+
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, function(c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+}
+
+/* ==========================================================
+   构建单个结点 HTML
+   4 个数据单元格（只显示数据，不显示标题）
+   1 个指针单元格：
+     尾结点 → 显示 ∧
+     非尾结点 → 由 CSS 绘制延伸到框外的长箭头
+   ========================================================== */
+function buildNode(data, isTail, isHighlight) {
+    const hl = isHighlight ? ' highlight' : '';
+    const ptrHtml = isTail
+        ? '<div class="node-ptr is-null">∧</div>'
+        : '<div class="node-ptr is-link"></div>';
+    return '<div class="node' + hl + '">'
+         +   '<div class="node-cell">' + escapeHtml(data.id) + '</div>'
+         +   '<div class="node-cell">' + escapeHtml(data.name) + '</div>'
+         +   '<div class="node-cell">' + escapeHtml(data.age) + '</div>'
+         +   '<div class="node-cell">' + escapeHtml(data.sex) + '</div>'
+         +   ptrHtml
+         + '</div>';
+}
+
+/* ==========================================================
+   渲染链表
+   未创建：可视化区域为空（什么都不显示）
+   已创建：HEAD → 头结点（4 个空数据域 + 指针域）→ 各数据结点
+   ========================================================== */
 function renderList(highlightIndex) {
-    highlightIndex = highlightIndex || -1;
+    if (highlightIndex === undefined || highlightIndex === null) {
+        highlightIndex = -1;
+    }
     const view = document.getElementById('linkedListView');
-    if (linkList.length === 0) {
-        view.innerHTML = '<span class="head-label">HEAD</span><span class="null-pointer"> → NULL</span>';
+
+    if (!listCreated) {
+        view.innerHTML = '';
         return;
     }
-    let html = '<span class="head-label">HEAD</span>';
+
+    let html = '<span class="head-label">HEAD</span><span class="head-arrow">→</span>';
+
+    const headIsTail = (linkList.length === 0);
+    html += buildNode({id:'', name:'', age:'', sex:''}, headIsTail, false);
+
     linkList.forEach(function(node, idx) {
-        let cls = 'node';
-        if (idx == highlightIndex) cls += ' highlight';
-        html += '<div class="' + cls + '"><div class="node-data">' + node.id + '<br><small>' + node.name + '</small></div><div class="node-pointer">age:' + node.age + '</div></div>';
-        if (idx < linkList.length - 1) html += '<span class="node-arrow">→</span>';
+        const isTail = (idx === linkList.length - 1);
+        const isHighlight = (idx === highlightIndex);
+        html += buildNode(node, isTail, isHighlight);
     });
-    html += '<span class="node-arrow">→</span><span class="null-pointer">NULL</span>';
+
     view.innerHTML = html;
 }
+
 function createList() {
+    if (listCreated) {
+        addLog('【提示】链表已创建，头结点已存在');
+        updateStepInfo('链表已创建，头结点已存在');
+        return;
+    }
     linkList = [];
+    listCreated = true;
     renderList();
-    updateStepInfo('链表已初始化（空链表）');
+    updateStepInfo('链表已初始化（头指针 HEAD 指向头结点，头结点数据域为空）');
     addLog('【操作】调用 InitList() 初始化单链表 → 创建头结点，头结点next指向NULL');
     addLog('【结果】链表L创建成功，当前长度: 0');
 }
+
 function addStudent() {
+    if (!listCreated) {
+        addLog('【错误】请先点击"创建链表"初始化链表！');
+        updateStepInfo('链表尚未创建，请先点击"创建链表"');
+        return;
+    }
     const id = document.getElementById('stuId').value.trim();
     const name = document.getElementById('stuName').value.trim();
     const age = parseInt(document.getElementById('stuAge').value) || 20;
     const sex = document.getElementById('stuSex').value;
     if (!id || !name) { addLog('【错误】学号和姓名不能为空！'); return; }
+
     linkList.push({id:id, name:name, age:age, sex:sex});
     renderList(-1);
     updateStepInfo('学生 ' + name + '(' + id + ') 已通过尾插法添加到链表末尾');
@@ -203,62 +317,112 @@ function addStudent() {
     document.getElementById('stuId').value = '2024' + String(num + 1).padStart(3, '0');
     addLog('提示: 已自动更新学号，可直接点击"添加学生"继续添加');
 }
+
 function traverseList() {
-    if (linkList.length === 0) { addLog('【错误】链表为空，无法遍历！'); updateStepInfo('链表为空'); return; }
+    if (!listCreated) { addLog('【错误】请先点击"创建链表"初始化链表！'); return; }
+    if (linkList.length === 0) {
+        addLog('【错误】链表为空，无法遍历！');
+        updateStepInfo('链表为空（只有头结点）');
+        return;
+    }
     updateStepInfo('正在遍历链表，逐个输出学生信息...');
     addLog('【操作】调用 traverse() 遍历链表');
+
     let i = 0;
-    const interval = setInterval(function() {
-        if (i >= linkList.length) { clearInterval(interval); updateStepInfo('遍历完成，共 ' + linkList.length + ' 个学生'); addLog('【结果】遍历结束，共输出 ' + linkList.length + ' 条学生记录'); return; }
+    function step() {
+        if (i >= linkList.length) {
+            renderList(-1);
+            updateStepInfo('遍历完成，共 ' + linkList.length + ' 个学生');
+            addLog('【结果】遍历结束，共输出 ' + linkList.length + ' 条学生记录');
+            return;
+        }
         renderList(i);
         const node = linkList[i];
-        addLog('  第' + (i+1) + '个结点: 学号=' + node.id + ', 姓名=' + node.name + ', 年龄=' + node.age + ', 性别=' + node.sex);
+        addLog('  第' + (i + 1) + '个结点: 学号=' + node.id + ', 姓名=' + node.name + ', 年龄=' + node.age + ', 性别=' + node.sex);
         i++;
-    }, 600);
+        setTimeout(step, 600);
+    }
+    step();
 }
+
 function searchStudent() {
+    if (!listCreated) { addLog('【错误】请先点击"创建链表"初始化链表！'); return; }
+    if (linkList.length === 0) { addLog('【错误】链表为空，无法查询！'); return; }
     const searchId = prompt('请输入要查询的学号:', '2024001');
     if (!searchId) return;
     updateStepInfo('正在按学号 ' + searchId + ' 查找...');
     addLog('【操作】调用 LocateNode(L, "' + searchId + '") 按学号查找');
+
     let i = 0;
-    const interval = setInterval(function() {
-        if (i >= linkList.length) { clearInterval(interval); updateStepInfo('未找到学号为 ' + searchId + ' 的学生'); addLog('【结果】未找到学号为 ' + searchId + ' 的结点，返回NULL'); return; }
+    function step() {
+        if (i >= linkList.length) {
+            renderList(-1);
+            updateStepInfo('未找到学号为 ' + searchId + ' 的学生');
+            addLog('【结果】未找到学号为 ' + searchId + ' 的结点，返回NULL');
+            return;
+        }
         renderList(i);
         const match = linkList[i].id === searchId;
-        addLog('  检查第' + (i+1) + '个结点: 学号=' + linkList[i].id + ' ' + (match ? '✓ 匹配!' : '✗ 不匹配，继续查找...'));
-        if (match) { clearInterval(interval); updateStepInfo('找到学生: ' + linkList[i].name); addLog('【结果】找到学号为 ' + searchId + ' 的结点! 姓名=' + linkList[i].name + ', 年龄=' + linkList[i].age + ', 性别=' + linkList[i].sex); return; }
+        addLog('  检查第' + (i + 1) + '个结点: 学号=' + linkList[i].id + ' ' + (match ? '✓ 匹配!' : '✗ 不匹配，继续查找...'));
+        if (match) {
+            updateStepInfo('找到学生: ' + linkList[i].name);
+            addLog('【结果】找到学号为 ' + searchId + ' 的结点! 姓名=' + linkList[i].name + ', 年龄=' + linkList[i].age + ', 性别=' + linkList[i].sex);
+            return;
+        }
         i++;
-    }, 500);
+        setTimeout(step, 500);
+    }
+    step();
 }
+
 function deleteStudent() {
+    if (!listCreated) { addLog('【错误】请先点击"创建链表"初始化链表！'); return; }
+    if (linkList.length === 0) { addLog('【错误】链表为空，无法删除！'); return; }
     const delId = prompt('请输入要删除的学号:', '2024001');
     if (!delId) return;
     const idx = linkList.findIndex(function(n) { return n.id === delId; });
-    if (idx === -1) { addLog('【错误】未找到学号为 ' + delId + ' 的学生，删除失败！'); updateStepInfo('未找到学号 ' + delId); return; }
+    if (idx === -1) {
+        addLog('【错误】未找到学号为 ' + delId + ' 的学生，删除失败！');
+        updateStepInfo('未找到学号 ' + delId);
+        return;
+    }
     updateStepInfo('正在删除学号为 ' + delId + ' 的学生...');
     addLog('【操作】调用 ListDelete(L, "' + delId + '") 删除指定结点');
-    addLog('  1. 遍历链表查找学号为 ' + delId + ' 的结点 (第' + (idx+1) + '个)');
+    addLog('  1. 遍历链表查找学号为 ' + delId + ' 的结点 (第' + (idx + 1) + '个)');
     addLog('  2. 找到目标结点，记录其前驱结点');
     addLog('  3. 前驱结点next指向目标结点的next');
     addLog('  4. free释放目标结点内存');
-    renderList(-1);
+    renderList(idx);
     setTimeout(function() {
         linkList.splice(idx, 1);
-        renderList();
+        renderList(-1);
         updateStepInfo('已删除学号 ' + delId + ' 的学生，当前链表长度: ' + linkList.length);
         addLog('【结果】学号 ' + delId + ' 的学生已从链表中删除，当前长度: ' + linkList.length);
     }, 500);
 }
+
+/* 清空链表：只清除数据结点，头指针 HEAD 和头结点保留 */
 function clearList() {
+    if (!listCreated) {
+        addLog('【错误】请先点击"创建链表"初始化链表！');
+        updateStepInfo('链表尚未创建，请先点击"创建链表"');
+        return;
+    }
+    const count = linkList.length;
     linkList = [];
     renderList();
-    updateStepInfo('链表已清空');
-    addLog('【操作】清空链表，释放所有结点内存');
-    addLog('【结果】链表已清空');
+    updateStepInfo('数据结点已全部清空（头指针 HEAD 与头结点保留）');
+    addLog('【操作】释放链表中全部数据结点内存（共 ' + count + ' 个），保留头结点');
+    addLog('【结果】链表已清空，当前长度: 0，头结点仍在');
 }
+
+/* 快速填充：必须先创建链表，否则给出提示 */
 function quickFill() {
-    createList();
+    if (!listCreated) {
+        addLog('【错误】请先点击"创建链表"初始化链表！');
+        updateStepInfo('链表尚未创建，请先点击"创建链表"');
+        return;
+    }
     const students = [
         {id:'2024001',name:'张三',age:20,sex:'男'},
         {id:'2024002',name:'李四',age:21,sex:'女'},
@@ -268,7 +432,11 @@ function quickFill() {
     ];
     let i = 0;
     const interval = setInterval(function() {
-        if (i >= students.length) { clearInterval(interval); addLog('【完成】已快速填充5个示例学生数据'); return; }
+        if (i >= students.length) {
+            clearInterval(interval);
+            addLog('【完成】已快速填充5个示例学生数据');
+            return;
+        }
         document.getElementById('stuId').value = students[i].id;
         document.getElementById('stuName').value = students[i].name;
         document.getElementById('stuAge').value = students[i].age;
@@ -277,7 +445,10 @@ function quickFill() {
         i++;
     }, 400);
 }
-addLog('系统就绪。请执行链表操作或点击"添加5个示例学生"快速体验。');
+
+// 初始化：可视化区域为空
+renderList();
+addLog('系统就绪。请点击"创建链表"初始化链表，然后执行后续操作。');
 </script>
 </body>
 </html>
