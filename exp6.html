@@ -66,6 +66,7 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .sort-bar.compare .sort-bar-inner{background:#f1c40f}
 .sort-bar.swap .sort-bar-inner{background:#e74c3c}
 .sort-bar.sorted .sort-bar-inner{background:#27ae60}
+.sort-bar.hole .sort-bar-inner{background:transparent;border:2px dashed #aaa;border-radius:3px 3px 0 0}
 .sort-bar-label{font-size:0.75em;color:#555;margin-top:3px;font-weight:bold}
 
 /* 统计数据 */
@@ -165,7 +166,7 @@ ul{padding-left:20px}li{margin-bottom:6px}
 
 <!-- Tab 2: 算法对比 -->
 <div id="tab-compare" class="tab-content">
-<div class="step-indicator"><strong>当前状态：</strong>选择测试数据规模进行对比</div>
+<div class="step-indicator" id="compareStepInfo"><strong>当前状态：</strong>选择测试数据规模进行对比</div>
 <div class="input-group">
 <label>数据规模:</label>
 <select id="dataSize">
@@ -175,11 +176,12 @@ ul{padding-left:20px}li{margin-bottom:6px}
 <option value="100">100</option>
 </select>
 <label>数据类型:</label>
-<select id="dataType">
+<select id="dataType" onchange="onDataTypeChange()">
 <option value="random">随机</option>
 <option value="sorted">正序</option>
 <option value="reverse">逆序</option>
 </select>
+<button class="viz-btn" onclick="generateCompareData()" style="background:#9b59b6">生成</button>
 <button class="viz-btn success" onclick="runCompare()">运行对比测试</button>
 </div>
 <div id="compareResult" style="margin:15px 0"></div>
@@ -241,18 +243,17 @@ void BubbleSort(int R[], int n) {
 
 <h3 style="color:#1a5276;margin:15px 0 10px">4. 快速排序</h3>
 <div class="code-container">
-<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 快速排序
+<textarea class="code-textarea" readonly style="width:100%;height:280px;background:#2c3e50;color:#ecf0f1;font-family:Consolas,Monaco,'Courier New',monospace;font-size:0.9em;line-height:1.6;white-space:pre;overflow:auto;border:none;border-radius:8px;padding:20px;box-sizing:border-box;margin:0;">// 快速排序（严蔚敏《数据结构》挖坑法）
 int Partition(int R[], int low, int high) {
-    int pivot = R[low];
-    int i = low, j = high;
-    while(i < j) {
-        while(i<j && R[j] >= pivot) j--;
-        R[i] = R[j];
-        while(i<j && R[i] <= pivot) i++;
-        R[j] = R[i];
+    int pivot = R[low];          // 枢轴记录
+    while(low < high) {
+        while(low < high && R[high] >= pivot) high--;
+        R[low] = R[high];        // 将比枢轴小的记录移到低端
+        while(low < high && R[low] <= pivot) low++;
+        R[high] = R[low];        // 将比枢轴大的记录移到高端
     }
-    R[i] = pivot;
-    return i;
+    R[low] = pivot;              // 枢轴记录到位
+    return low;
 }
 
 void QuickSort(int R[], int low, int high) {
@@ -274,11 +275,19 @@ void QuickSort(int R[], int low, int high) {
 <div class="footer"><p>信息工程学院计算机系 · 数据结构虚拟仿真实验教学项目</p></div>
 
 <script>
+/* ============ 状态变量 ============ */
 let arr = [];
-let comparisons = 0, swaps = 0;
-let sortAnimation = null;
+let originalArr = [];
+let comparisons = 0;
+let swaps = 0;
 let isSorting = false;
+let sortGen = null;
+let stepAlgo = null;
+let sortedSet = new Set();
+let stepCount = 0;
+let holeIndex = -1;          // 挖坑法：当前“坑”的位置
 
+/* ============ 通用工具 ============ */
 function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
     document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active')});
@@ -296,243 +305,463 @@ function addLog(msg) {
     logArea.scrollTop = logArea.scrollHeight;
 }
 
-function initArray() {
-    const input = document.getElementById('arrayInput').value;
-    arr = input.split(',').map(Number).filter(function(x){return !isNaN(x)});
-    renderArray();
-    comparisons = 0; swaps = 0;
-    updateStats();
-    updateStepInfo('数组已生成: ' + arr.join(', '));
-    addLog('【操作】生成数组: [' + arr.join(', ') + ']');
-}
-
-function randomArray() {
-    const size = parseInt(document.getElementById('dataSize').value) || 10;
-    arr = [];
-    for(let i=0; i<size; i++) arr.push(Math.floor(Math.random()*99)+1);
-    renderArray();
-    comparisons = 0; swaps = 0;
-    updateStats();
-    updateStepInfo('随机数组已生成 (' + size + '个元素)');
-    addLog('【操作】生成随机数组: [' + arr.join(', ') + ']');
-}
-
-function renderArray(highlights, sortedIndices) {
-    highlights = highlights || {};
-    sortedIndices = sortedIndices || [];
-    const view = document.getElementById('sortView');
-    const arrayView = document.getElementById('arrayView');
-    const maxVal = Math.max(...arr);
-    
-    let barsHtml = '';
-    let labelsHtml = '';
-    arr.forEach(function(val, idx) {
-        let cls = 'sort-bar';
-        if(highlights.compare && highlights.compare.includes(idx)) cls += ' compare';
-        else if(highlights.swap && highlights.swap.includes(idx)) cls += ' swap';
-        else if(sortedIndices.includes(idx)) cls += ' sorted';
-        
-        const height = maxVal > 0 ? (val / maxVal * 250) : 10;
-        barsHtml += '<div class="' + cls + '" style="height:280px"><div class="sort-bar-inner" style="height:' + height + 'px"></div></div>';
-        labelsHtml += '<div class="' + cls + '" style="width:35px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;font-weight:bold;font-size:0.85em;color:' + 
-            (sortedIndices.includes(idx) ? '#fff' : '#2c3e50') + ';background:' + 
-            (sortedIndices.includes(idx) ? '#27ae60' : (highlights.compare && highlights.compare.includes(idx) ? '#f1c40f' : (highlights.swap && highlights.swap.includes(idx) ? '#e74c3c' : '#3498db'))) + '">' + val + '</div>';
-    });
-    
-    view.innerHTML = barsHtml;
-    arrayView.innerHTML = labelsHtml;
-}
-
 function updateStats() {
     document.getElementById('statComp').textContent = comparisons;
     document.getElementById('statSwap').textContent = swaps;
+    document.getElementById('compCount').textContent = comparisons;
+    document.getElementById('swapCount').textContent = swaps;
 }
 
 function updateStepInfo(msg) {
     document.getElementById('stepInfo').innerHTML = '<strong>当前状态：</strong>' + msg;
 }
 
-function sleep(ms) { return new Promise(function(resolve) { setTimeout(resolve, ms); }); }
-
-async function runSort() {
-    if(isSorting) return;
-    isSorting = true;
-    
-    const algo = document.getElementById('sortAlgo').value;
-    const speed = parseInt(document.getElementById('speed').value);
-    const arrCopy = arr.slice();
-    comparisons = 0; swaps = 0;
-    updateStats();
-    
-    updateStepInfo('正在执行' + getAlgoName(algo) + '...');
-    addLog('【操作】开始执行 ' + getAlgoName(algo) + '，数组: [' + arr.join(', ') + ']');
-    
-    const startTime = Date.now();
-    
-    if(algo === 'insertion') {
-        await insertionSort(arrCopy, speed);
-    } else if(algo === 'selection') {
-        await selectionSort(arrCopy, speed);
-    } else if(algo === 'bubble') {
-        await bubbleSort(arrCopy, speed);
-    } else if(algo === 'quick') {
-        await quickSort(arrCopy, 0, arrCopy.length-1, speed);
-    }
-    
-    renderArray({}, arr.map(function(_,i){return i}));
-    const elapsed = Date.now() - startTime;
-    document.getElementById('statTime').textContent = elapsed + 'ms';
-    updateStepInfo('排序完成! 耗时 ' + elapsed + 'ms');
-    addLog('【结果】排序完成! 数组: [' + arr.join(', ') + '] 比较:' + comparisons + ' 交换:' + swaps + ' 耗时:' + elapsed + 'ms');
-    isSorting = false;
-}
+function sleep(ms) { return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
 
 function getAlgoName(algo) {
     const names = {insertion:'直接插入排序', selection:'简单选择排序', bubble:'冒泡排序', quick:'快速排序'};
     return names[algo] || algo;
 }
 
-async function insertionSort(arr, speed) {
-    for(let i=1; i<arr.length; i++) {
-        let key = arr[i];
-        let j = i - 1;
-        comparisons++;
-        renderArray({compare:[i, j]}, []);
-        await sleep(speed);
-        
-        while(j >= 0 && arr[j] > key) {
-            comparisons++;
-            arr[j+1] = arr[j];
-            swaps++;
-            renderArray({swap:[j, j+1]}, []);
-            await sleep(speed);
-            j--;
-        }
-        arr[j+1] = key;
-        swaps++;
-        renderArray({}, arr.map(function(_,idx){return idx <= i ? idx : -1}).filter(function(x){return x >= 0}));
-        await sleep(speed/2);
+/* ============ 渲染 ============ */
+function renderArray(highlights) {
+    highlights = highlights || {};
+    const view = document.getElementById('sortView');
+    const arrayView = document.getElementById('arrayView');
+
+    if (arr.length === 0) {
+        view.innerHTML = '';
+        arrayView.innerHTML = '';
+        return;
     }
+
+    const nums = arr.filter(function(v){ return typeof v === 'number'; });
+    const maxVal = nums.length ? Math.max.apply(null, nums) : 1;
+
+    let barsHtml = '';
+    let labelsHtml = '';
+    arr.forEach(function(val, idx) {
+        // 坑位置优先显示为空心
+        if (idx === holeIndex) {
+            barsHtml += '<div class="sort-bar hole" style="height:280px">'
+                     + '<div class="sort-bar-inner" style="height:0px"></div></div>';
+            labelsHtml += '<div style="width:35px;height:30px;display:inline-flex;align-items:center;'
+                       + 'justify-content:center;border-radius:6px;font-weight:bold;font-size:0.75em;'
+                       + 'color:#888;background:#f0f0f0;border:2px dashed #aaa">空</div>';
+            return;
+        }
+
+        let state = '';
+        if (highlights.compare && highlights.compare.indexOf(idx) !== -1) state = 'compare';
+        else if (highlights.swap && highlights.swap.indexOf(idx) !== -1) state = 'swap';
+        else if (sortedSet.has(idx)) state = 'sorted';
+
+        const height = maxVal > 0 ? (val / maxVal * 250) : 10;
+        barsHtml += '<div class="sort-bar ' + state + '" style="height:280px">'
+                 + '<div class="sort-bar-inner" style="height:' + height + 'px"></div></div>';
+
+        let bg = '#3498db', color = '#fff';
+        if (state === 'compare') { bg = '#f1c40f'; color = '#2c3e50'; }
+        else if (state === 'swap') { bg = '#e74c3c'; color = '#fff'; }
+        else if (state === 'sorted') { bg = '#27ae60'; color = '#fff'; }
+
+        labelsHtml += '<div style="width:35px;height:30px;display:inline-flex;align-items:center;'
+                   + 'justify-content:center;border-radius:6px;font-weight:bold;font-size:0.85em;'
+                   + 'color:' + color + ';background:' + bg + '">' + val + '</div>';
+    });
+
+    view.innerHTML = barsHtml;
+    arrayView.innerHTML = labelsHtml;
 }
 
-async function selectionSort(arr, speed) {
-    for(let i=0; i<arr.length-1; i++) {
-        let min = i;
-        for(let j=i+1; j<arr.length; j++) {
-            comparisons++;
-            renderArray({compare:[min, j]}, []);
-            await sleep(speed);
-            if(arr[j] < arr[min]) min = j;
-        }
-        if(min !== i) {
-            let temp = arr[i]; arr[i] = arr[min]; arr[min] = temp;
-            swaps++;
-            renderArray({swap:[i, min]}, []);
-            await sleep(speed);
-        }
-    }
+/* ============ 状态重置 ============ */
+function resetSortState() {
+    sortGen = null;
+    stepAlgo = null;
+    sortedSet.clear();
+    comparisons = 0;
+    swaps = 0;
+    stepCount = 0;
+    holeIndex = -1;
+    updateStats();
+    document.getElementById('statTime').textContent = '0ms';
+    renderArray({});
 }
 
-async function bubbleSort(arr, speed) {
-    let n = arr.length;
-    for(let i=0; i<n-1; i++) {
-        let swapped = false;
-        for(let j=0; j<n-1-i; j++) {
-            comparisons++;
-            renderArray({compare:[j, j+1]}, []);
-            await sleep(speed);
-            if(arr[j] > arr[j+1]) {
-                let temp = arr[j]; arr[j] = arr[j+1]; arr[j+1] = temp;
-                swaps++;
-                swapped = true;
-                renderArray({swap:[j, j+1]}, []);
-                await sleep(speed);
-            }
-        }
-        if(!swapped) break;
-    }
+/* ============ 数据输入 ============ */
+function initArray() {
+    if (isSorting) { addLog('【提示】排序正在进行中，请稍候'); return; }
+    const input = document.getElementById('arrayInput').value;
+    const newArr = input.split(',').map(Number).filter(function(x){ return !isNaN(x); });
+    if (newArr.length === 0) { addLog('【提示】请输入有效的数字数组'); return; }
+
+    arr = newArr;
+    originalArr = newArr.slice();
+    resetSortState();
+    updateStepInfo('数组已生成: [' + arr.join(', ') + ']');
+    addLog('【操作】生成数组: [' + arr.join(', ') + ']');
 }
 
-async function quickSort(arr, low, high, speed) {
-    if(low < high) {
-        let pivot = await partition(arr, low, high, speed);
-        await quickSort(arr, low, pivot-1, speed);
-        await quickSort(arr, pivot+1, high, speed);
-    }
-}
-
-async function partition(arr, low, high, speed) {
-    let pivot = arr[low];
-    let i = low, j = high;
-    
-    while(i < j) {
-        while(i<j && arr[j] >= pivot) {
-            comparisons++;
-            j--;
-        }
-        if(i < j) {
-            arr[i] = arr[j];
-            swaps++;
-            renderArray({swap:[i, j]}, []);
-            await sleep(speed);
-            i++;
-        }
-        while(i<j && arr[i] <= pivot) {
-            comparisons++;
-            i++;
-        }
-        if(i < j) {
-            arr[j] = arr[i];
-            swaps++;
-            renderArray({swap:[i, j]}, []);
-            await sleep(speed);
-            j--;
-        }
-    }
-    arr[i] = pivot;
-    swaps++;
-    renderArray({}, []);
-    await sleep(speed);
-    return i;
+function randomArray() {
+    if (isSorting) { addLog('【提示】排序正在进行中，请稍候'); return; }
+    const size = parseInt(document.getElementById('dataSize').value) || 10;
+    arr = [];
+    for (let i = 0; i < size; i++) arr.push(Math.floor(Math.random() * 99) + 1);
+    originalArr = arr.slice();
+    document.getElementById('arrayInput').value = arr.join(',');
+    resetSortState();
+    updateStepInfo('随机数组已生成（' + size + ' 个元素）');
+    addLog('【操作】生成随机数组（' + size + ' 个元素）');
 }
 
 function resetArray() {
-    if(arr.length > 0) {
-        renderArray({}, []);
-        comparisons = 0; swaps = 0;
-        updateStats();
-        updateStepInfo('数组已重置');
-        addLog('【操作】重置数组');
+    if (isSorting) { addLog('【提示】排序正在进行中，请稍候'); return; }
+    arr = originalArr.slice();
+    document.getElementById('arrayInput').value = arr.join(',');
+    resetSortState();
+    updateStepInfo('数组已重置');
+    addLog('【操作】数组已重置为初始数据');
+}
+
+/* 若用户在输入框中手动改动过数据，则同步为新的原始数组 */
+function syncInput() {
+    const inputVal = document.getElementById('arrayInput').value.trim();
+    if (inputVal === '') return;
+    if (inputVal !== arr.join(',')) {
+        const newArr = inputVal.split(',').map(Number).filter(function(x){ return !isNaN(x); });
+        if (newArr.length > 0) {
+            arr = newArr.slice();
+            originalArr = newArr.slice();
+            addLog('【提示】检测到输入框数据变化，已同步为最新数组');
+        }
     }
 }
 
-function stepSort() {
-    addLog('【提示】逐步执行功能需在排序运行时使用，建议直接点击"运行排序"观看完整动画');
+/* ============ 生成器工厂 ============ */
+function createGen(algo) {
+    const a = arr;
+    switch (algo) {
+        case 'insertion': return insertionSortGen(a);
+        case 'selection': return selectionSortGen(a);
+        case 'bubble':    return bubbleSortGen(a);
+        case 'quick':     return quickSortGen(a, 0, a.length - 1);
+        default:          return insertionSortGen(a);
+    }
 }
 
-// 算法对比
+/* ============ 每一步的统一处理 ============ */
+function applyStep(step) {
+    stepCount++;
+    if (step.sorted) {
+        step.sorted.forEach(function(i){ sortedSet.add(i); });
+    }
+    if (step.hole !== undefined) {
+        holeIndex = (step.hole === null) ? -1 : step.hole;
+    }
+    renderArray({ compare: step.compare, swap: step.swap });
+    updateStats();
+}
+
+/* ============ 自动运行 ============ */
+async function runSort() {
+    if (isSorting) return;
+
+    syncInput();
+    if (arr.length === 0) { addLog('【提示】请先生成数组'); return; }
+
+    isSorting = true;
+
+    const algo = document.getElementById('sortAlgo').value;
+    const speed = parseInt(document.getElementById('speed').value);
+
+    arr = originalArr.slice();
+    document.getElementById('arrayInput').value = arr.join(',');
+
+    sortedSet.clear();
+    comparisons = 0;
+    swaps = 0;
+    stepCount = 0;
+    holeIndex = -1;
+    updateStats();
+    renderArray({});
+
+    sortGen = createGen(algo);
+    stepAlgo = algo;
+
+    updateStepInfo('正在执行' + getAlgoName(algo) + '...');
+    addLog('【操作】开始执行 ' + getAlgoName(algo) + '，数组: [' + arr.join(', ') + ']');
+
+    const startTime = Date.now();
+
+    while (true) {
+        const r = sortGen.next();
+        if (r.done) break;
+        applyStep(r.value);
+        await sleep(speed);
+    }
+
+    const elapsed = Date.now() - startTime;
+    document.getElementById('statTime').textContent = elapsed + 'ms';
+
+    holeIndex = -1;
+    for (let i = 0; i < arr.length; i++) sortedSet.add(i);
+    renderArray({});
+
+    updateStepInfo('排序完成！比较 ' + comparisons + ' 次，移动 ' + swaps + ' 次，耗时 ' + elapsed + 'ms');
+    addLog('【结果】排序完成！数组: [' + arr.join(', ') + '] 比较:' + comparisons + ' 移动:' + swaps + ' 耗时:' + elapsed + 'ms');
+
+    sortGen = null;
+    stepAlgo = null;
+    isSorting = false;
+}
+
+/* ============ 逐步执行 ============ */
+function stepSort() {
+    if (isSorting) { addLog('【提示】自动排序正在进行中，请等待完成'); return; }
+
+    const algo = document.getElementById('sortAlgo').value;
+
+    if (!sortGen || stepAlgo !== algo) {
+        syncInput();
+        if (arr.length === 0) { addLog('【提示】请先生成数组'); return; }
+
+        arr = originalArr.slice();
+        document.getElementById('arrayInput').value = arr.join(',');
+        sortedSet.clear();
+        comparisons = 0;
+        swaps = 0;
+        stepCount = 0;
+        holeIndex = -1;
+        updateStats();
+        renderArray({});
+        sortGen = createGen(algo);
+        stepAlgo = algo;
+        addLog('【操作】进入逐步执行模式：' + getAlgoName(algo) + '，数组: [' + arr.join(', ') + ']');
+    }
+
+    const r = sortGen.next();
+    if (r.done) {
+        holeIndex = -1;
+        for (let i = 0; i < arr.length; i++) sortedSet.add(i);
+        renderArray({});
+        updateStepInfo('逐步执行完成！比较 ' + comparisons + ' 次，移动 ' + swaps + ' 次');
+        addLog('【结果】逐步执行完成！数组: [' + arr.join(', ') + '] 比较:' + comparisons + ' 移动:' + swaps);
+        sortGen = null;
+        stepAlgo = null;
+        return;
+    }
+
+    applyStep(r.value);
+    updateStepInfo('逐步执行中（第 ' + stepCount + ' 步）：' + getAlgoName(algo));
+}
+
+/* ============ 各排序算法的生成器实现 ============ */
+/* 直接插入排序：用相邻交换实现，保证可视化过程中没有“空洞” */
+function* insertionSortGen(a) {
+    for (let i = 1; i < a.length; i++) {
+        let j = i;
+        while (j > 0) {
+            comparisons++;
+            yield { compare: [j - 1, j] };
+            if (a[j - 1] > a[j]) {
+                const t = a[j - 1]; a[j - 1] = a[j]; a[j] = t;
+                swaps++;
+                yield { swap: [j - 1, j] };
+                j--;
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+/* 简单选择排序 */
+function* selectionSortGen(a) {
+    const n = a.length;
+    if (n === 0) return;
+    for (let i = 0; i < n - 1; i++) {
+        let min = i;
+        for (let j = i + 1; j < n; j++) {
+            comparisons++;
+            yield { compare: [min, j] };
+            if (a[j] < a[min]) min = j;
+        }
+        if (min !== i) {
+            const t = a[i]; a[i] = a[min]; a[min] = t;
+            swaps++;
+            yield { swap: [i, min] };
+        }
+        yield { sorted: [i] };
+    }
+    yield { sorted: [n - 1] };
+}
+
+/* 冒泡排序（带提前结束） */
+function* bubbleSortGen(a) {
+    const n = a.length;
+    if (n === 0) return;
+    for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < n - 1 - i; j++) {
+            comparisons++;
+            yield { compare: [j, j + 1] };
+            if (a[j] > a[j + 1]) {
+                const t = a[j]; a[j] = a[j + 1]; a[j + 1] = t;
+                swaps++;
+                swapped = true;
+                yield { swap: [j, j + 1] };
+            }
+        }
+        yield { sorted: [n - 1 - i] };
+        if (!swapped) {
+            const rest = [];
+            for (let k = 0; k <= n - 2 - i; k++) rest.push(k);
+            if (rest.length > 0) yield { sorted: rest };
+            return;
+        }
+    }
+    yield { sorted: [0] };
+}
+
+/* 快速排序（严蔚敏《数据结构（C语言版）》挖坑法，以第一个元素为枢轴） */
+function* quickSortGen(a, low, high) {
+    if (low >= high) {
+        if (low === high) yield { sorted: [low] };
+        return;
+    }
+    const pivot = a[low];
+    let i = low, j = high;
+    // 标记初始坑位置
+    yield { hole: low };
+
+    while (i < j) {
+        // 从右向左找第一个小于枢轴的元素
+        while (i < j) {
+            comparisons++;
+            yield { compare: [j] };
+            if (a[j] < pivot) break;
+            j--;
+        }
+        if (i < j) {
+            a[i] = a[j];
+            swaps++;
+            yield { swap: [i, j], hole: j };
+            i++;
+        }
+        // 从左向右找第一个大于枢轴的元素
+        while (i < j) {
+            comparisons++;
+            yield { compare: [i] };
+            if (a[i] > pivot) break;
+            i++;
+        }
+        if (i < j) {
+            a[j] = a[i];
+            swaps++;
+            yield { swap: [i, j], hole: i };
+            j--;
+        }
+    }
+    // 枢轴填入最终位置
+    a[i] = pivot;
+    swaps++;
+    yield { sorted: [i], hole: null };
+
+    yield* quickSortGen(a, low, i - 1);
+    yield* quickSortGen(a, i + 1, high);
+}
+
+/* ============ 算法对比 ============ */
+let compareData = [];
+let compareDataGenerated = false;
+
+/* 生成指定规模和类型的数据（首次点击“生成”按钮时调用） */
+function buildData(size, type) {
+    let data = [];
+    if (type === 'random') {
+        for (let i = 0; i < size; i++) data.push(Math.floor(Math.random() * 1000) + 1);
+    } else if (type === 'sorted') {
+        for (let i = 1; i <= size; i++) data.push(i);
+    } else {
+        for (let i = size; i >= 1; i--) data.push(i);
+    }
+    return data;
+}
+
+function getTypeName(type) {
+    return {random:'随机', sorted:'正序', reverse:'逆序'}[type] || type;
+}
+
+/* Fisher-Yates 随机洗牌（就地） */
+function shuffleInPlace(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+
+/* 生成按钮：按“数据规模”和“数据类型”重新生成一份新数据 */
+function generateCompareData() {
+    const size = parseInt(document.getElementById('dataSize').value);
+    const type = document.getElementById('dataType').value;
+    compareData = buildData(size, type);
+    compareDataGenerated = true;
+    document.getElementById('compareStepInfo').innerHTML =
+        '<strong>当前状态：</strong>已生成 ' + size + ' 个数据（' + getTypeName(type) + '）：[' + compareData.join(', ') + ']';
+    document.getElementById('compareResult').innerHTML = '';
+}
+
+/* 数据类型切换：对“当前状态”中已显示的数据进行重排，并刷新显示 */
+function onDataTypeChange() {
+    const type = document.getElementById('dataType').value;
+
+    // 尚未生成数据：仅提示，不自动生成
+    if (!compareDataGenerated || compareData.length === 0) {
+        document.getElementById('compareStepInfo').innerHTML =
+            '<strong>当前状态：</strong>请先点击“生成”按钮生成数据';
+        document.getElementById('compareResult').innerHTML = '';
+        return;
+    }
+
+    // 对已有数据重排
+    if (type === 'random') {
+        shuffleInPlace(compareData);
+    } else if (type === 'sorted') {
+        compareData.sort(function(x, y){ return x - y; });
+    } else if (type === 'reverse') {
+        compareData.sort(function(x, y){ return y - x; });
+    }
+
+    // 刷新“当前状态”，并清除之前显示的对比结果
+    document.getElementById('compareStepInfo').innerHTML =
+        '<strong>当前状态：</strong>已重排 ' + compareData.length + ' 个数据（' + getTypeName(type) + '）：[' + compareData.join(', ') + ']';
+    document.getElementById('compareResult').innerHTML = '';
+}
+
 function runCompare() {
     const size = parseInt(document.getElementById('dataSize').value);
     const type = document.getElementById('dataType').value;
-    
-    let testData = [];
-    if(type === 'random') {
-        for(let i=0; i<size; i++) testData.push(Math.floor(Math.random()*1000)+1);
-    } else if(type === 'sorted') {
-        for(let i=1; i<=size; i++) testData.push(i);
-    } else {
-        for(let i=size; i>=1; i--) testData.push(i);
+
+    // 若未生成数据，或数据长度与当前规模不符，则自动生成
+    if (!compareDataGenerated || compareData.length !== size) {
+        compareData = buildData(size, type);
+        compareDataGenerated = true;
+        document.getElementById('compareStepInfo').innerHTML =
+            '<strong>当前状态：</strong>已生成 ' + size + ' 个数据（' + getTypeName(type) + '）：[' + compareData.join(', ') + ']';
     }
-    
+
+    const testData = compareData.slice();
+
     const algos = [
-        {name:'直接插入排序', fn:function(a){return insertionSortTest(a.slice())}},
-        {name:'简单选择排序', fn:function(a){return selectionSortTest(a.slice())}},
-        {name:'冒泡排序', fn:function(a){return bubbleSortTest(a.slice())}},
-        {name:'快速排序', fn:function(a){return quickSortTest(a.slice())}}
+        {name:'直接插入排序', fn:function(a){return insertionSortTest(a.slice());}},
+        {name:'简单选择排序', fn:function(a){return selectionSortTest(a.slice());}},
+        {name:'冒泡排序',     fn:function(a){return bubbleSortTest(a.slice());}},
+        {name:'快速排序',     fn:function(a){return quickSortTest(a.slice());}}
     ];
-    
+
     let html = '<table class="table"><tr><th>排序算法</th><th>比较次数</th><th>交换次数</th><th>耗时(ms)</th></tr>';
-    
+
     algos.forEach(function(algo) {
         const start = Date.now();
         const result = algo.fn(testData);
@@ -540,64 +769,76 @@ function runCompare() {
         html += '<tr><td>' + algo.name + '</td><td>' + result.comparisons + '</td><td>' + result.swaps + '</td><td>' + elapsed + '</td></tr>';
     });
     html += '</table>';
-    
+
     document.getElementById('compareResult').innerHTML = html;
     addLog('【操作】算法对比测试: 数据规模=' + size + ' 数据类型=' + type);
     addLog('【结果】对比测试完成，详见表格');
 }
 
 function insertionSortTest(a) {
-    let comp=0, sw=0;
-    for(let i=1; i<a.length; i++) {
+    let comp = 0, sw = 0;
+    for (let i = 1; i < a.length; i++) {
         comp++;
-        let key = a[i], j=i-1;
-        while(j>=0 && a[j]>key) { comp++; a[j+1]=a[j]; sw++; j--; }
-        a[j+1]=key; sw++;
+        const key = a[i];
+        let j = i - 1;
+        while (j >= 0 && a[j] > key) { comp++; a[j + 1] = a[j]; sw++; j--; }
+        a[j + 1] = key; sw++;
     }
-    return {comparisons:comp, swaps:sw};
+    return {comparisons: comp, swaps: sw};
 }
 function selectionSortTest(a) {
-    let comp=0, sw=0;
-    for(let i=0; i<a.length-1; i++) {
-        let min=i;
-        for(let j=i+1; j<a.length; j++) { comp++; if(a[j]<a[min]) min=j; }
-        if(min!==i) { let t=a[i];a[i]=a[min];a[min]=t; sw++; }
+    let comp = 0, sw = 0;
+    for (let i = 0; i < a.length - 1; i++) {
+        let min = i;
+        for (let j = i + 1; j < a.length; j++) { comp++; if (a[j] < a[min]) min = j; }
+        if (min !== i) { const t = a[i]; a[i] = a[min]; a[min] = t; sw++; }
     }
-    return {comparisons:comp, swaps:sw};
+    return {comparisons: comp, swaps: sw};
 }
 function bubbleSortTest(a) {
-    let comp=0, sw=0;
-    for(let i=0; i<a.length-1; i++) {
-        let swapped=false;
-        for(let j=0; j<a.length-1-i; j++) {
+    let comp = 0, sw = 0;
+    for (let i = 0; i < a.length - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < a.length - 1 - i; j++) {
             comp++;
-            if(a[j]>a[j+1]) { let t=a[j];a[j]=a[j+1];a[j+1]=t; sw++; swapped=true; }
+            if (a[j] > a[j + 1]) { const t = a[j]; a[j] = a[j + 1]; a[j + 1] = t; sw++; swapped = true; }
         }
-        if(!swapped) break;
+        if (!swapped) break;
     }
-    return {comparisons:comp, swaps:sw};
+    return {comparisons: comp, swaps: sw};
 }
 function quickSortTest(a) {
-    let comp=0, sw=0;
-    function part(l,h) {
-        if(l>=h) return;
-        let pivot=a[l], i=l, j=h;
-        while(i<j) {
-            while(i<j && a[j]>=pivot) {comp++; j--;}
-            if(i<j) {a[i]=a[j];sw++; i++;}
-            while(i<j && a[i]<=pivot) {comp++; i++;}
-            if(i<j) {a[j]=a[i];sw++; j--;}
+    let comp = 0, sw = 0;
+    function part(l, h) {
+        if (l >= h) return;
+        const pivot = a[l];
+        let i = l, j = h;
+        while (i < j) {
+            while (i < j && a[j] >= pivot) { comp++; j--; }
+            if (i < j) { a[i] = a[j]; sw++; i++; }
+            while (i < j && a[i] <= pivot) { comp++; i++; }
+            if (i < j) { a[j] = a[i]; sw++; j--; }
         }
-        a[i]=pivot; sw++;
-        part(l,i-1); part(i+1,h);
+        a[i] = pivot; sw++;
+        part(l, i - 1);
+        part(i + 1, h);
     }
-    part(0,a.length-1);
-    return {comparisons:comp, swaps:sw};
+    part(0, a.length - 1);
+    return {comparisons: comp, swaps: sw};
 }
 
-// 初始化
-initArray();
-addLog('系统就绪。请生成数组并选择排序算法运行可视化演示。');
+/* ============ 初始化 ============ */
+function initApp() {
+    const input = document.getElementById('arrayInput').value;
+    arr = input.split(',').map(Number).filter(function(x){ return !isNaN(x); });
+    originalArr = arr.slice();
+    updateStats();
+    renderArray({});
+    updateStepInfo('请选择排序算法并点击运行');
+    addLog('系统就绪。请点击"生成数组"加载数据，然后选择排序算法运行演示。');
+}
+
+initApp();
 </script>
 </body>
 </html>
